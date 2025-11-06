@@ -11,6 +11,7 @@ import ProductModal from "../ProductModal";
 import Footer from "../Footer";
 import TopIcons from "../TopIcons";
 import CartDrawer from "../CartDrawer";
+import AccountPopup from "../AccountPopup";
 
 export default function CatalogoPage() {
   return (
@@ -23,6 +24,7 @@ export default function CatalogoPage() {
       <MusicDrawer />
       <ProductModal />
       <CartDrawer />
+      <AccountPopup />
       <Footer />
       <TopIcons />
     </div>
