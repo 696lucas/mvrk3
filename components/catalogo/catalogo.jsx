@@ -14,6 +14,7 @@ import TopIcons from "../TopIcons";
 import CartDrawer from "../CartDrawer";
 import OrdersView from "../OrdersView";
 import AccountPopup from "../AccountPopup";
+import NewsletterModal from "../NewsletterModal";
 
 export default function CatalogoPage() {
   const [view, setView] = useState("catalog"); // 'catalog' | 'orders'
@@ -40,6 +41,7 @@ export default function CatalogoPage() {
       <CartDrawer />
       <AccountPopup />
       <Footer />
+      <NewsletterModal />
       <TopIcons />
     </div>
   );
