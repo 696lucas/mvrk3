@@ -2,9 +2,20 @@
 
 import { useEffect, useState } from "react";
 
-const ACCOUNT_URL =
-  process.env.NEXT_PUBLIC_SHOPIFY_ACCOUNT_URL ||
-  "https://shopify.com/95655526787/account";
+// ====== CONFIG RUTA LOGIN SHOPIFY (NEW CUSTOMER ACCOUNTS) ======
+const SHOPIFY_STORE_DOMAIN = "qhzkkr-2d.myshopify.com";
+const NEXT_DEST = "https://mvrk3.vercel.app/catalogo";
+
+// Página intermedia dentro de Shopify
+const AFTER_LOGIN_PATH = "/pages/after-login";
+
+// Construimos el return_to para el sistema NUEVO de cuentas:
+// https://{store}/customer_authentication/login?return_to=/pages/after-login?next=https%3A%2F%2Fmvrk3.vercel.app%2Fcatalogo
+const RETURN_TO = encodeURIComponent(
+  `${AFTER_LOGIN_PATH}?next=${encodeURIComponent(NEXT_DEST)}`
+);
+
+const ACCOUNT_URL = `https://${SHOPIFY_STORE_DOMAIN}/customer_authentication/login?return_to=${RETURN_TO}`;
 
 export default function AccountPopup() {
   const [open, setOpen] = useState(false);
@@ -87,6 +98,7 @@ export default function AccountPopup() {
         }
       }
 
+      // 👇 Nuevo flujo: sistema de Customer Accounts nuevo + return_to
       window.location.href = ACCOUNT_URL;
     } catch (err) {
       console.error(err);
