@@ -65,7 +65,6 @@ function formatMoney(amount, currency){
 
 export default function AccountPopup(){
   const [open, setOpen] = useState(false);            // small dropdown near icon
-  const [ordersOpen, setOrdersOpen] = useState(false); // large orders modal
   const [mode, setMode] = useState("login"); // login | register | profile
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -99,13 +98,7 @@ export default function AccountPopup(){
     .pb-acc__orders{ display:flex; flex-direction:column; gap:10px; }
     .pb-acc__order{ padding:10px; border:1px solid #eee; border-radius:10px; }
 
-    /* Large orders modal */
-    #pb-orders-dlg{ position:fixed; inset:0; z-index:100002; display:none; }
-    #pb-orders-dlg.is-open{ display:block; }
-    .pb-orders__overlay{ position:absolute; inset:0; background:rgba(0,0,0,.45); backdrop-filter: blur(1px); }
-    .pb-orders__panel{ position:absolute; right:0; left:0; top:8%; margin:auto; width:min(96vw, 840px); background:#fff; color:#111; border-radius:12px; overflow:hidden; box-shadow: 0 20px 50px rgba(0,0,0,.35); border:1px solid rgba(0,0,0,.06); }
-    .pb-orders__head{ padding:14px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,.08); font-weight:700; }
-    .pb-orders__body{ padding:16px; max-height:70vh; overflow:auto; display:flex; flex-direction:column; gap:10px; }
+    /* Orders view styles moved to OrdersView */
     `;
     document.head.appendChild(style);
 
@@ -118,8 +111,11 @@ export default function AccountPopup(){
       setOpen(true);
     };
     window.closeAccountPopup = () => setOpen(false);
-    window.openOrdersPopup = () => { setOrdersOpen(true); };
-    window.closeOrdersPopup = () => { setOrdersOpen(false); };
+    // Delegate to page-level toggles
+    window.openOrdersPopup = () => { if (window.showOrders) window.showOrders(); };
+    window.closeOrdersPopup = () => { if (window.showCatalog) window.showCatalog(); };
+
+    // No extra listeners here; handled in OrdersView
 
     return () => {
       try{ document.head.removeChild(style); }catch{}
@@ -175,7 +171,8 @@ export default function AccountPopup(){
       const t = getToken();
       if (t) fetchCustomer(t);
     }
-    setOrdersOpen(true);
+    if (window.showOrders) window.showOrders();
+    setOpen(false);
   }
 
   return (
@@ -245,36 +242,7 @@ export default function AccountPopup(){
       </div>
     </div>
 
-    {/* Large Orders Modal */}
-    <div id="pb-orders-dlg" className={ordersOpen ? 'is-open' : ''} aria-hidden={!ordersOpen}>
-      <div className="pb-orders__overlay" onClick={()=>setOrdersOpen(false)} />
-      <div className="pb-orders__panel" role="dialog" aria-modal="true" aria-label="Pedidos">
-        <div className="pb-orders__head">
-          <span>Tus pedidos</span>
-          <button className="pb-acc__btn pb-acc__btn--sec" onClick={()=>setOrdersOpen(false)}>Cerrar</button>
-        </div>
-        <div className="pb-orders__body">
-          {loading && <div>Cargando…</div>}
-          {!loading && (
-            <>
-              {(customer?.orders?.edges?.length ? customer.orders.edges : []).map(({node}) => (
-                <div key={node.id} className="pb-acc__order">
-                  <div style={{display:'flex', justifyContent:'space-between'}}>
-                    <div>{node.name || ('Pedido #' + node.orderNumber)}</div>
-                    <div>{node.totalPriceV2 ? formatMoney(node.totalPriceV2.amount, node.totalPriceV2.currencyCode) : ''}</div>
-                  </div>
-                  <div style={{opacity:.8, fontSize:12}}>Fecha: {new Date(node.processedAt).toLocaleDateString('es-ES')}</div>
-                  <div style={{opacity:.8, fontSize:12}}>Estado: {node.fulfillmentStatus || '-'} · Pago: {node.financialStatus || '-'}</div>
-                </div>
-              ))}
-              {!customer?.orders?.edges?.length && (
-                <div style={{opacity:.8}}>No hay pedidos todavía.</div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-    </div>
+    {/* Orders view handled by OrdersView component */}
     </>
   );
 }

@@ -6,8 +6,8 @@ export default function Hero() {
   return (
     <header className="hero" id="hero">
       <Image
-        src="/lettering/lettering-Bp-zbET-.webp"
-        alt="Pórtate Bien"
+        src="/lettering/portate%20bien%20solo.png"
+        alt="Portate bien"
         width={1200}
         height={300}
         priority
@@ -15,4 +15,3 @@ export default function Hero() {
     </header>
   );
 }
-
