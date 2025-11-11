@@ -2,26 +2,22 @@
 
 import { useEffect, useState } from "react";
 
-// ====== CONFIG RUTAS SHOPIFY ======
+// ====== CONFIG RUTAS ======
 const SHOPIFY_STORE_DOMAIN = "qhzkkr-2d.myshopify.com";
 
-// Destino final después del login (home con flag)
-const NEXT_DEST = "https://mvrk3.vercel.app/?pb_logged_in=1";
+// a dónde quieres volver tras loguearte: catálogo + flag
+const NEXT_DEST = "https://mvrk3.vercel.app/catalogo?pb_logged_in=1";
 
-// Página intermedia dentro de Shopify
+// página intermedia dentro de Shopify
 const AFTER_LOGIN_PATH = "/pages/after-login";
 
-// return_to para el sistema nuevo de cuentas
-const RETURN_TO = encodeURIComponent(
-  `${AFTER_LOGIN_PATH}?next=${encodeURIComponent(NEXT_DEST)}`
-);
-
-// URL de login (new customer accounts)
+// Shopify (new customer accounts) usa customer_authentication + return_to
+const RETURN_TO = encodeURIComponent(AFTER_LOGIN_PATH);
 const ACCOUNT_URL = `https://${SHOPIFY_STORE_DOMAIN}/customer_authentication/login?return_to=${RETURN_TO}`;
 
-// URL de pedidos en el portal de cuentas nuevo
-const SHOPIFY_ORDERS_URL =
-  "https://shopify.com/95655526787/account/orders";
+// ruta interna de tu página de pedidos en mvrk3
+// si tu ruta es otra, cambia "/clients" por la que uses
+const CLIENTS_PATH = "/clients";
 
 export default function AccountPopup() {
   const [open, setOpen] = useState(false);
@@ -55,7 +51,7 @@ export default function AccountPopup() {
         window.location.hash;
       window.history.replaceState(null, "", newUrl);
     } else {
-      // mirar si ya teníamos el flag guardado
+      // mirar si ya teníamos el flag guardado de antes
       const stored = window.localStorage.getItem("pb_logged_in");
       if (stored === "1") {
         setIsLoggedIn(true);
@@ -86,6 +82,7 @@ export default function AccountPopup() {
     `;
     document.head.appendChild(style);
 
+    // APIs globales para abrir/cerrar el popup desde el icono de usuario
     window.openAccountPopup = () => {
       setError("");
       setMode("login");
@@ -106,10 +103,8 @@ export default function AccountPopup() {
     if (e && e.preventDefault) e.preventDefault();
     setError("");
 
-    if (isLoggedIn) {
-      // si ya está "logueado", no hacemos nada al submit
-      return;
-    }
+    // si ya está "logueado" no hacemos nada en submit
+    if (isLoggedIn) return;
 
     if (!email || !/.+@.+\..+/.test(email)) {
       setError("Introduce un email válido");
@@ -118,6 +113,7 @@ export default function AccountPopup() {
 
     setLoading(true);
     try {
+      // Newsletter opcional
       if (wantsNewsletter) {
         const res = await fetch("/api/newsletter", {
           method: "POST",
@@ -141,7 +137,7 @@ export default function AccountPopup() {
         }
       }
 
-      // Salto al login de Shopify (new customer accounts) con return_to
+      // Salto al login de Shopify (new customer accounts) con return_to=/pages/after-login
       window.location.href = ACCOUNT_URL;
     } catch (err) {
       console.error(err);
@@ -150,7 +146,6 @@ export default function AccountPopup() {
     }
   }
 
-  // Permitir “olvidar” el flag local si el usuario quiere cambiar de cuenta
   function handleUseAnotherAccount() {
     if (typeof window !== "undefined") {
       window.localStorage.removeItem("pb_logged_in");
@@ -193,10 +188,9 @@ export default function AccountPopup() {
               </div>
 
               <a
-                href={SHOPIFY_ORDERS_URL}
-                target="_blank"
-                rel="noreferrer"
+                href={CLIENTS_PATH}
                 className="pb-acc__linkbtn"
+                onClick={() => setOpen(false)}
               >
                 Ver mis pedidos
               </a>
