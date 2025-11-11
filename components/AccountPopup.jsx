@@ -2,20 +2,26 @@
 
 import { useEffect, useState } from "react";
 
-// ====== CONFIG RUTA LOGIN SHOPIFY (NEW CUSTOMER ACCOUNTS) ======
+// ====== CONFIG RUTAS SHOPIFY ======
 const SHOPIFY_STORE_DOMAIN = "qhzkkr-2d.myshopify.com";
-const NEXT_DEST = "https://mvrk3.vercel.app/catalogo";
+
+// Destino final después del login (home con flag)
+const NEXT_DEST = "https://mvrk3.vercel.app/?pb_logged_in=1";
 
 // Página intermedia dentro de Shopify
 const AFTER_LOGIN_PATH = "/pages/after-login";
 
-// Construimos el return_to para el sistema NUEVO de cuentas:
-// https://{store}/customer_authentication/login?return_to=/pages/after-login?next=https%3A%2F%2Fmvrk3.vercel.app%2Fcatalogo
+// return_to para el sistema nuevo de cuentas
 const RETURN_TO = encodeURIComponent(
   `${AFTER_LOGIN_PATH}?next=${encodeURIComponent(NEXT_DEST)}`
 );
 
+// URL de login (new customer accounts)
 const ACCOUNT_URL = `https://${SHOPIFY_STORE_DOMAIN}/customer_authentication/login?return_to=${RETURN_TO}`;
+
+// URL de pedidos en el portal de cuentas nuevo
+const SHOPIFY_ORDERS_URL =
+  "https://shopify.com/95655526787/account/orders";
 
 export default function AccountPopup() {
   const [open, setOpen] = useState(false);
@@ -26,7 +32,38 @@ export default function AccountPopup() {
   const [wantsNewsletter, setWantsNewsletter] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  // ===== Detectar flag pb_logged_in en la URL y en localStorage =====
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const params = new URLSearchParams(window.location.search);
+    const fromCallback = params.get("pb_logged_in");
+
+    if (fromCallback === "1") {
+      // viene justo de hacer login en Shopify
+      window.localStorage.setItem("pb_logged_in", "1");
+      setIsLoggedIn(true);
+
+      // limpiamos el parámetro de la URL
+      params.delete("pb_logged_in");
+      const newSearch = params.toString();
+      const newUrl =
+        window.location.pathname +
+        (newSearch ? `?${newSearch}` : "") +
+        window.location.hash;
+      window.history.replaceState(null, "", newUrl);
+    } else {
+      // mirar si ya teníamos el flag guardado
+      const stored = window.localStorage.getItem("pb_logged_in");
+      if (stored === "1") {
+        setIsLoggedIn(true);
+      }
+    }
+  }, []);
+
+  // ===== Inyectar estilos + funciones globales para abrir/cerrar =====
   useEffect(() => {
     const style = document.createElement("style");
     style.textContent = `
@@ -38,9 +75,10 @@ export default function AccountPopup() {
       .pb-acc__tabs{ display:flex; gap:6px; margin-bottom:10px; }
       .pb-acc__tab{ flex:1; background:#f4f4f4; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700; text-align:center; }
       .pb-acc__tab.active{ background:#111; color:#fff; }
-      .pb-acc__row{ display:flex; flex-direction:column; gap:6px; }
+      .pb-acc__row{ display:flex; flex-direction:column; gap:6px; font-size:14px; }
       .pb-acc__input{ padding:10px 12px; border:1px solid #ddd; border-radius:8px; font-size:14px; }
-      .pb-acc__btn{ background:#111; color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; font-weight:700; width:100%; }
+      .pb-acc__btn{ background:#111; color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; font-weight:700; width:100%; text-align:center; }
+      .pb-acc__linkbtn{ display:inline-flex; justify-content:center; align-items:center; width:100%; padding:10px 14px; border-radius:8px; font-weight:700; text-decoration:none; border:1px solid #111; color:#111; background:#fff; }
       .pb-acc__err{ color:#d00; font-size:13px; }
       .pb-acc__check{ display:flex; align-items:center; gap:8px; font-size:13px; }
       .pb-acc__check input{ width:16px; height:16px; }
@@ -67,6 +105,11 @@ export default function AccountPopup() {
   async function handleContinue(e) {
     if (e && e.preventDefault) e.preventDefault();
     setError("");
+
+    if (isLoggedIn) {
+      // si ya está "logueado", no hacemos nada al submit
+      return;
+    }
 
     if (!email || !/.+@.+\..+/.test(email)) {
       setError("Introduce un email válido");
@@ -98,13 +141,22 @@ export default function AccountPopup() {
         }
       }
 
-      // 👇 Nuevo flujo: sistema de Customer Accounts nuevo + return_to
+      // Salto al login de Shopify (new customer accounts) con return_to
       window.location.href = ACCOUNT_URL;
     } catch (err) {
       console.error(err);
       setError("Error inesperado. Inténtalo de nuevo.");
       setLoading(false);
     }
+  }
+
+  // Permitir “olvidar” el flag local si el usuario quiere cambiar de cuenta
+  function handleUseAnotherAccount() {
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem("pb_logged_in");
+    }
+    setIsLoggedIn(false);
+    setMode("login");
   }
 
   return (
@@ -123,83 +175,121 @@ export default function AccountPopup() {
       >
         <form className="pb-acc__body" onSubmit={handleContinue}>
           <div className="pb-acc__title">
-            {mode === "login" ? "Iniciar sesión" : "Crear tu cuenta"}
+            {isLoggedIn
+              ? "Estás conectado"
+              : mode === "login"
+              ? "Iniciar sesión"
+              : "Crear tu cuenta"}
           </div>
 
-          <div className="pb-acc__tabs">
-            <button
-              type="button"
-              className={"pb-acc__tab " + (mode === "login" ? "active" : "")}
-              onClick={() => setMode("login")}
-            >
-              Iniciar sesión
-            </button>
-            <button
-              type="button"
-              className={
-                "pb-acc__tab " + (mode === "register" ? "active" : "")
-              }
-              onClick={() => setMode("register")}
-            >
-              Crear tu cuenta
-            </button>
-          </div>
-
-          {mode === "register" && (
+          {/* ===== VISTA SI YA ESTÁ “LOGUEADO” ===== */}
+          {isLoggedIn ? (
             <>
               <div className="pb-acc__row">
-                <label>Nombre</label>
-                <input
-                  className="pb-acc__input"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="Nombre"
-                />
+                <span>
+                  Tu sesión en Shopify está activa. Tus datos se rellenarán
+                  automáticamente en el checkout.
+                </span>
               </div>
+
+              <a
+                href={SHOPIFY_ORDERS_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="pb-acc__linkbtn"
+              >
+                Ver mis pedidos
+              </a>
+
+              <button
+                type="button"
+                className="pb-acc__btn"
+                onClick={handleUseAnotherAccount}
+              >
+                Usar otra cuenta
+              </button>
+            </>
+          ) : (
+            <>
+              {/* ===== TABS LOGIN / REGISTER ===== */}
+              <div className="pb-acc__tabs">
+                <button
+                  type="button"
+                  className={
+                    "pb-acc__tab " + (mode === "login" ? "active" : "")
+                  }
+                  onClick={() => setMode("login")}
+                >
+                  Iniciar sesión
+                </button>
+                <button
+                  type="button"
+                  className={
+                    "pb-acc__tab " + (mode === "register" ? "active" : "")
+                  }
+                  onClick={() => setMode("register")}
+                >
+                  Crear tu cuenta
+                </button>
+              </div>
+
+              {mode === "register" && (
+                <>
+                  <div className="pb-acc__row">
+                    <label>Nombre</label>
+                    <input
+                      className="pb-acc__input"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      placeholder="Nombre"
+                    />
+                  </div>
+                  <div className="pb-acc__row">
+                    <label>Apellido</label>
+                    <input
+                      className="pb-acc__input"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      placeholder="Apellido"
+                    />
+                  </div>
+                </>
+              )}
+
               <div className="pb-acc__row">
-                <label>Apellido</label>
+                <label>Email</label>
                 <input
+                  type="email"
                   className="pb-acc__input"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Apellido"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="tucorreo@ejemplo.com"
                 />
               </div>
+
+              <div className="pb-acc__check">
+                <input
+                  id="pb-acc-news"
+                  type="checkbox"
+                  checked={wantsNewsletter}
+                  onChange={(e) => setWantsNewsletter(e.target.checked)}
+                />
+                <label htmlFor="pb-acc-news">
+                  Quiero recibir novedades y lanzamientos por email
+                </label>
+              </div>
+
+              {error && <div className="pb-acc__err">{error}</div>}
+
+              <button type="submit" disabled={loading} className="pb-acc__btn">
+                {loading
+                  ? "Procesando…"
+                  : mode === "login"
+                  ? "Continuar"
+                  : "Crear cuenta y continuar"}
+              </button>
             </>
           )}
-
-          <div className="pb-acc__row">
-            <label>Email</label>
-            <input
-              type="email"
-              className="pb-acc__input"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="tucorreo@ejemplo.com"
-            />
-          </div>
-
-          <div className="pb-acc__check">
-            <input
-              id="pb-acc-news"
-              type="checkbox"
-              checked={wantsNewsletter}
-              onChange={(e) => setWantsNewsletter(e.target.checked)}
-            />
-            <label htmlFor="pb-acc-news">
-              Quiero recibir novedades y lanzamientos por email
-            </label>
-          </div>
-
-          {error && <div className="pb-acc__err">{error}</div>}
-
-          <button type="submit" disabled={loading} className="pb-acc__btn">
-            {loading
-              ? "Procesando…"
-              : mode === "login"
-              ? "Continuar"
-              : "Crear cuenta y continuar"}
-          </button>
         </form>
       </div>
     </div>
