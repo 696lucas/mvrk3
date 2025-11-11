@@ -41,7 +41,17 @@ main{ position:relative; z-index:1; width:100%; }
   }
 }
 @media (max-width:768px){
-  .piece img{ max-width:min(50vw,280px); max-height:min(40vw,240px); }
+  /* Mobile: 3 por fila, centrado, un poco más pequeño y con ligera "desalineación" visual */
+  .collage{ display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start; gap:12px; height:auto !important; }
+  .piece{ position:static; left:auto; top:auto; will-change:auto; z-index:auto; width: 30%; display:flex; justify-content:center; transition: transform .15s ease; }
+  /* sutil desorden por patrón */
+  .piece:nth-child(6n+1){ transform: translateY(6px) rotate(-1.2deg); }
+  .piece:nth-child(6n+2){ transform: translateY(-4px) rotate(1deg); }
+  .piece:nth-child(6n+3){ transform: translateY(2px) rotate(0.6deg); }
+  .piece:nth-child(6n+4){ transform: translateY(-3px) rotate(-0.8deg); }
+  .piece:nth-child(6n+5){ transform: translateY(5px) rotate(1.2deg); }
+  .piece:nth-child(6n){ transform: translateY(-5px) rotate(-0.4deg); }
+  .piece img{ width:95%; height:auto; max-width:none; max-height:none; object-fit:contain; }
 }
 .sr-only{
   position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
@@ -240,7 +250,7 @@ main{ position:relative; z-index:1; width:100%; }
 
 /* ===== Recomendados (debajo del producto) ===== */
 .pb-related-block{
-  border-top:none; background:transparent; margin-top:-100px; /* súbelo/bájalo a tu gusto */
+  border-top:none; background:transparent; margin-top: -100px; /* súbelo/bájalo a tu gusto */
   padding-top:8px; padding-bottom:0;
 }
 .pb-related-title{
@@ -449,4 +459,42 @@ main{ position:relative; z-index:1; width:100%; }
 .pb-size-pill.is-disabled{
   opacity:.4;
   cursor:not-allowed;
+}
+
+
+/* ===== Recomendados en modal: 2x2 en m�vil ===== */
+@media (max-width: 768px){
+  .pb-related-row{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:14px; justify-items:center; }
+  .pb-related-card{ width:100%; max-width:220px; }
+  .pb-related-imgwrap{ width:100%; }
+}
+
+
+/* ===== Modal helpers: mobile brand ===== */
+@media (max-width: 768px){
+  .pb-modal-brand{ position: sticky; top: 8px; display:flex; width:100%; justify-content:flex-start; padding-left:10px; margin-bottom:6px; z-index: 2; }
+  .pb-modal-brand img{ height: 40px; width: auto; display:block; filter: drop-shadow(0 6px 10px rgba(0,0,0,.35)); }
+}
+
+
+/* Hide modal brand on desktop */
+@media (min-width: 769px){
+  .pb-modal-brand{ display:none !important; }
+}
+
+/* Desktop-only brand placement (top-left, small) */
+@media (min-width: 769px){
+  .pb-modal-brand{ position:absolute; top:12px; left:12px; display:inline-flex; align-items:center; z-index:3; padding:0; margin:0; }
+  .pb-modal-brand img{ height: 32px; width:auto; }
+}
+
+/* Hide brand on mobile */
+@media (max-width: 768px){
+  .pb-modal-brand{ display:none !important; }
+}
+
+/* Mobile modal spacing fixes to avoid overlaps */
+@media (max-width: 768px){
+  .pb-purchase-row{ margin-bottom: 12px; }
+  .pb-related-block{ margin-top: 20px; }
 }

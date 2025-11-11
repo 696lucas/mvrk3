@@ -32,6 +32,7 @@ export default function ProductModal() {
 
     const prevArrow = document.getElementById('pbCarouselPrev');
     const nextArrow = document.getElementById('pbCarouselNext');
+    const frameEl  = cardEl?.querySelector('.pb-prod-carousel-frame');
 
     const clamp = (x, min, max) => Math.min(max, Math.max(min, x));
     const basename = (p)=> (p||'').split('/').pop();
@@ -54,6 +55,37 @@ export default function ProductModal() {
     function goNextImg(){ if (!currentImages.length) return; currentImageIndex = (currentImageIndex + 1) % currentImages.length; renderCarouselImage(); }
     prevArrow && prevArrow.addEventListener('click', goPrevImg);
     nextArrow && nextArrow.addEventListener('click', goNextImg);
+
+    // Mobile swipe support (keeps arrows too)
+    let startX = 0, startY = 0, isPointerDown = false, didSwipe = false;
+    const SWIPE_THRESH = 40; // px
+    const onPointerDown = (e) => {
+      isPointerDown = true; didSwipe = false;
+      const p = e.touches ? e.touches[0] : e;
+      startX = p.clientX; startY = p.clientY;
+    };
+    const onPointerMove = (e) => {
+      if (!isPointerDown) return;
+      const p = e.touches ? e.touches[0] : e;
+      const dx = p.clientX - startX; const dy = p.clientY - startY;
+      if (!didSwipe && Math.abs(dx) > SWIPE_THRESH && Math.abs(dx) > Math.abs(dy) * 1.2) {
+        didSwipe = true;
+        if (dx < 0) goNextImg(); else goPrevImg();
+      }
+    };
+    const onPointerUp = () => { isPointerDown = false; didSwipe = false; };
+    if (frameEl) {
+      try { frameEl.style.touchAction = 'pan-y'; } catch {}
+      frameEl.addEventListener('touchstart', onPointerDown, { passive: true });
+      frameEl.addEventListener('touchmove', onPointerMove, { passive: true });
+      frameEl.addEventListener('touchend', onPointerUp, { passive: true });
+      frameEl.addEventListener('mousedown', onPointerDown);
+      frameEl.addEventListener('mousemove', onPointerMove);
+      frameEl.addEventListener('mouseup', onPointerUp);
+      frameEl.addEventListener('mouseleave', onPointerUp);
+    }
+
+    // Swipe support removed to restore previous behavior
 
     function renderMedia(images){ currentImages = images || []; currentImageIndex = 0; renderCarouselImage(); }
 
@@ -228,6 +260,15 @@ export default function ProductModal() {
       qtyBoxEl && qtyBoxEl.removeEventListener('click', onQty);
       prevArrow && prevArrow.removeEventListener('click', goPrevImg);
       nextArrow && nextArrow.removeEventListener('click', goNextImg);
+      if (frameEl){
+        frameEl.removeEventListener('touchstart', onPointerDown);
+        frameEl.removeEventListener('touchmove', onPointerMove);
+        frameEl.removeEventListener('touchend', onPointerUp);
+        frameEl.removeEventListener('mousedown', onPointerDown);
+        frameEl.removeEventListener('mousemove', onPointerMove);
+        frameEl.removeEventListener('mouseup', onPointerUp);
+        frameEl.removeEventListener('mouseleave', onPointerUp);
+      }
     };
   }, []);
 
@@ -241,6 +282,15 @@ export default function ProductModal() {
         </button>
 
         <section className="pb-prod-main">
+          {/* Mobile brand to go back to catalog (mobile-only via CSS) */}
+          <a
+            className="pb-modal-brand"
+            href="#"
+            onClick={(e)=>{ e.preventDefault(); e.stopPropagation(); if (typeof window.showCatalog==='function') window.showCatalog(); const m=document.getElementById('pbProductModal'); if(m){ m.classList.remove('is-open'); m.setAttribute('aria-hidden','true'); } document.body.classList.remove('pb-modal-open'); }}
+            aria-label="Volver al catálogo"
+          >
+            <img src="/lettering/logo-C-sEIKdg.webp" alt="Logo PB" />
+          </a>
           <div className="pb-prod-gallery">
             <div className="pb-prod-carousel-frame">
               <button className="pb-carousel-arrow pb-carousel-arrow--prev" id="pbCarouselPrev" aria-label="Anterior"><Image className="flechacarrusel" src="/icon/flechaizquierda.png" alt="" width={24} height={24} /></button>
@@ -309,4 +359,5 @@ export default function ProductModal() {
     </div>
   );
 }
+
 
