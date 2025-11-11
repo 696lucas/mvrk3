@@ -301,10 +301,20 @@ main{ position:relative; z-index:1; width:100%; }
   letter-spacing:var(--footer-track); font-weight:800;
 }
 @media (max-width:750px){
-  .pb-footer-split__inner{ flex-direction:column; align-items:stretch; }
-  .pb-footer-ig-col{ justify-items:start; text-align:left; }
+
+.pb-footer-split-wrap{ position:fixed; left:0; right:0; bottom:0; z-index:10; }
+
+  .pb-footer-split{ padding: 12px var(--footer-pad-x) 16px; .pb-footer-ig-col{ justify-items:end; text-align:right; }
 }
-@media (min-width:769px){ .collage{ margin-bottom: clamp(48px, 8vh, 140px); } }
+  .pb-footer-split__inner{ display:grid; grid-template-columns: 1fr auto; align-items:center; gap:12px; }
+  .pb-footer-links{ display:grid; text-align:left; justify-items:start; gap:8px; }
+  .pb-footer-link{ font-size: calc(var(--footer-size) * 0.9); line-height:1.2; }
+  .pb-footer-ig-col{ display:grid; justify-items:end; align-content:start; text-align:right; }
+  .pb-footer-copy{ font-size: calc(var(--footer-size) * 0.9); }
+}
+  .pb-footer-ig-col{ justify-items:start; text-align:left; }
+
+@media (min-width:769px){ .collage{ margin-bottom: 4px; }} 
 
 /* ===== Z-index mÃºsica ===== */
 .music-drawer{ z-index:10000 !important; pointer-events:none }
@@ -462,7 +472,7 @@ main{ position:relative; z-index:1; width:100%; }
 }
 
 
-/* ===== Recomendados en modal: 2x2 en móvil ===== */
+/* ===== Recomendados en modal: 2x2 en mï¿½vil ===== */
 @media (max-width: 768px){
   .pb-related-row{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:14px; justify-items:center; }
   .pb-related-card{ width:100%; max-width:220px; }
