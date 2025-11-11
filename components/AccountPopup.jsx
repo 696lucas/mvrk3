@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 // ====== CONFIG RUTAS ======
 const SHOPIFY_STORE_DOMAIN = "qhzkkr-2d.myshopify.com";
 
-// a dónde quieres volver tras loguearte: catálogo + flag
-const NEXT_DEST = "https://mvrk3.vercel.app/catalogo?pb_logged_in=1";
+// a dónde quieres volver tras loguearte: HOME + flag
+const NEXT_DEST = "https://mvrk3.vercel.app/?pb_logged_in=1";
 
 // página intermedia dentro de Shopify
 const AFTER_LOGIN_PATH = "/pages/after-login";
@@ -20,7 +20,7 @@ const AFTER_LOGIN_URL = `${AFTER_LOGIN_PATH}?next=${encodeURIComponent(
 const RETURN_TO = encodeURIComponent(AFTER_LOGIN_URL);
 const ACCOUNT_URL = `https://${SHOPIFY_STORE_DOMAIN}/customer_authentication/login?return_to=${RETURN_TO}`;
 
-// ruta interna de tu página de pedidos en mvrk3
+// ruta interna de tu página de pedidos en mvrk3 (fallback)
 const CLIENTS_PATH = "/clients";
 
 export default function AccountPopup() {
@@ -190,13 +190,25 @@ export default function AccountPopup() {
                 </span>
               </div>
 
-              <a
-                href={CLIENTS_PATH}
+              {/* Abrir vista de pedidos en el catálogo (OrdersView) */}
+              <button
+                type="button"
                 className="pb-acc__linkbtn"
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    if (window.showOrders) {
+                      // usa el toggle global que defines en CatalogoPage
+                      window.showOrders();
+                    } else {
+                      // fallback por si no existe (ej. en otra página)
+                      window.location.href = CLIENTS_PATH;
+                    }
+                  }
+                  setOpen(false);
+                }}
               >
                 Ver mis pedidos
-              </a>
+              </button>
 
               <button
                 type="button"
