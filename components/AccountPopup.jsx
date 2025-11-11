@@ -11,20 +11,22 @@ const NEXT_DEST = "https://mvrk3.vercel.app/catalogo?pb_logged_in=1";
 // página intermedia dentro de Shopify
 const AFTER_LOGIN_PATH = "/pages/after-login";
 
+// /pages/after-login?next=...
+const AFTER_LOGIN_URL = `${AFTER_LOGIN_PATH}?next=${encodeURIComponent(
+  NEXT_DEST
+)}`;
+
 // Shopify (new customer accounts) usa customer_authentication + return_to
-const RETURN_TO = encodeURIComponent(AFTER_LOGIN_PATH);
+const RETURN_TO = encodeURIComponent(AFTER_LOGIN_URL);
 const ACCOUNT_URL = `https://${SHOPIFY_STORE_DOMAIN}/customer_authentication/login?return_to=${RETURN_TO}`;
 
 // ruta interna de tu página de pedidos en mvrk3
-// si tu ruta es otra, cambia "/clients" por la que uses
 const CLIENTS_PATH = "/clients";
 
 export default function AccountPopup() {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState("login"); // "login" | "register"
   const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
   const [wantsNewsletter, setWantsNewsletter] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -79,6 +81,7 @@ export default function AccountPopup() {
       .pb-acc__check{ display:flex; align-items:center; gap:8px; font-size:13px; }
       .pb-acc__check input{ width:16px; height:16px; }
       .pb-acc__title{ font-weight:700; font-size:16px; margin-bottom:4px; }
+      .pb-acc__hint{ font-size:13px; color:#555; }
     `;
     document.head.appendChild(style);
 
@@ -137,7 +140,7 @@ export default function AccountPopup() {
         }
       }
 
-      // Salto al login de Shopify (new customer accounts) con return_to=/pages/after-login
+      // Salto al login de Shopify (new customer accounts) con return_to=/pages/after-login?next=...
       window.location.href = ACCOUNT_URL;
     } catch (err) {
       console.error(err);
@@ -227,29 +230,6 @@ export default function AccountPopup() {
                 </button>
               </div>
 
-              {mode === "register" && (
-                <>
-                  <div className="pb-acc__row">
-                    <label>Nombre</label>
-                    <input
-                      className="pb-acc__input"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      placeholder="Nombre"
-                    />
-                  </div>
-                  <div className="pb-acc__row">
-                    <label>Apellido</label>
-                    <input
-                      className="pb-acc__input"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      placeholder="Apellido"
-                    />
-                  </div>
-                </>
-              )}
-
               <div className="pb-acc__row">
                 <label>Email</label>
                 <input
@@ -260,6 +240,14 @@ export default function AccountPopup() {
                   placeholder="tucorreo@ejemplo.com"
                 />
               </div>
+
+              {mode === "register" && (
+                <div className="pb-acc__row pb-acc__hint">
+                  La cuenta se crea en Shopify con tu email. Al continuar te
+                  llevaremos a una pantalla segura donde te enviarán un enlace
+                  para entrar por primera vez.
+                </div>
+              )}
 
               <div className="pb-acc__check">
                 <input
