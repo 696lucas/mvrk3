@@ -50,6 +50,7 @@ CON
 public/fondo/
 # allow the selected background video to be committed
 !public/fondo/FONDO SIN SOMBRA.mp4
+!public/landing/*.mp4
 *.mov
 *.mp4
 *.avi
