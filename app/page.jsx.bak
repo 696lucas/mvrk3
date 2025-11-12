@@ -11,7 +11,7 @@ export default function LandingPB() {
   const senalMerch = '/landing/SENAL_MERCH.png';
   const senalPB    = '/landing/SENAL_PORTATE_BIEN.png';
 
-  const fuegoRef = useRef(null);
+  const fuegoRef = useRef<HTMLVideoElement | null>(null);
   const [errShows, setErrShows] = useState(false);
   const [errMerch, setErrMerch] = useState(false);
   const [errPB, setErrPB] = useState(false);
@@ -29,7 +29,7 @@ export default function LandingPB() {
 
       <div className="center">
         {!errPB ? (
-          <img className="img" src={senalPB} alt="Pórtate Bien"
+          <img className="img" src={senalPB} alt="PÃ³rtate Bien"
                onError={() => { console.error('No carga', senalPB); setErrPB(true); }} />
         ) : <div className="fallback">PB</div>}
 
@@ -83,4 +83,3 @@ export default function LandingPB() {
     </main>
   );
 }
-
