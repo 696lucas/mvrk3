@@ -47,12 +47,12 @@ export default function BackgroundCanvas() {
         playsInline
         preload="metadata"
         poster="/frames/frame_001.webp"
-        src="/fondo/FONDO ANIMADO WEB.mov"
+        src="/fondo/FONDO SIN SOMBRA.mp4"
         style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', objectFit: 'cover', zIndex: 0, display: 'block', background: '#000' }}
       >
-        {/* Optional future sources for better compatibility */}
-        {/* <source src="/fondo/fondo.mp4" type="video/mp4" /> */}
-        {/* <source src="/fondo/fondo.webm" type="video/webm" /> */}
+        {/* Fuentes opcionales para compatibilidad */}
+        <source src="/fondo/FONDO SIN SOMBRA.mp4" type="video/mp4" />
+        <source src="/fondo/FONDO ANIMADO WEB.mov" type="video/quicktime" />
       </video>
       {failed && (
         <img
