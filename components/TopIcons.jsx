@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect } from 'react';
 import Image from 'next/image';
@@ -31,8 +31,8 @@ export default function TopIcons() {
     };
   }, []);
   return (
-    <div className="pb-top-icons" aria-label="Acciones rápidas">
-      <a href="/account" className="pb-top-icon pb-user-trigger" title="Cuenta">
+    <div className="pb-top-icons" aria-label="Acciones rÃ¡pidas">
+      <a href="/account" className="pb-top-icon pb-user-trigger" title="Cuenta" style={{ display: 'none' }}>
         <Image src="/icon/user.png" alt="Cuenta" width={24} height={24} />
       </a>
       <a href="/cart" className="pb-top-icon pb-cart-trigger" title="Carrito">
@@ -41,3 +41,4 @@ export default function TopIcons() {
     </div>
   );
 }
+
