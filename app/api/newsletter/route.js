@@ -90,29 +90,51 @@ export async function POST(req) {
       return new Response(JSON.stringify({ ok: false, error: "No se pudo localizar el cliente existente" }), { status: 404 });
     }
 
-    const updateMutation = `
-      mutation UpdateCustomer($input: CustomerInput!) {
-        customerUpdate(input: $input) {
+    // 1) Actualizar consentimiento de marketing con la mutación dedicada
+    const consentMutation = `
+      mutation UpdateConsent($customerId: ID!, $emailMarketingConsent: CustomerEmailMarketingConsentInput!) {
+        customerEmailMarketingConsentUpdate(
+          customerId: $customerId,
+          emailMarketingConsent: $emailMarketingConsent
+        ) {
           customer { id email emailMarketingConsent { marketingState } }
           userErrors { field message }
         }
       }
     `;
-    const updateVars = {
-      input: {
-        id: customerId,
-        emailMarketingConsent: {
-          marketingState: "SUBSCRIBED",
-          marketingOptInLevel: "SINGLE_OPT_IN",
-          consentUpdatedAt: nowISO,
-        },
-        tags: ["newsletter", "pb-newsletter"],
+    const consentVars = {
+      customerId,
+      emailMarketingConsent: {
+        marketingState: "SUBSCRIBED",
+        marketingOptInLevel: "SINGLE_OPT_IN",
+        consentUpdatedAt: nowISO,
       },
     };
-    const updateData = await shopifyAdmin(updateMutation, updateVars);
-    const updateErrors = updateData.customerUpdate.userErrors || [];
-    if (updateErrors.length) {
-      return new Response(JSON.stringify({ ok: false, error: updateErrors.map(e => e.message).join(" / ") }), { status: 400 });
+    const consentData = await shopifyAdmin(consentMutation, consentVars);
+    const consentErrors = consentData.customerEmailMarketingConsentUpdate.userErrors || [];
+    if (consentErrors.length) {
+      return new Response(
+        JSON.stringify({ ok: false, error: consentErrors.map(e => e.message).join(" / ") }),
+        { status: 400 }
+      );
+    }
+
+    // 2) Añadir tags al cliente (si no están)
+    const tagsMutation = `
+      mutation AddTags($id: ID!, $tags: [String!]!) {
+        tagsAdd(id: $id, tags: $tags) {
+          userErrors { field message }
+        }
+      }
+    `;
+    const tagsVars = { id: customerId, tags: ["newsletter", "pb-newsletter"] };
+    const tagsData = await shopifyAdmin(tagsMutation, tagsVars);
+    const tagErrors = tagsData.tagsAdd?.userErrors || [];
+    if (tagErrors.length) {
+      return new Response(
+        JSON.stringify({ ok: false, error: tagErrors.map(e => e.message).join(" / ") }),
+        { status: 400 }
+      );
     }
     return new Response(JSON.stringify({ ok: true }), { status: 200 });
   } catch (err) {
