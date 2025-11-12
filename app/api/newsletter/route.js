@@ -92,22 +92,21 @@ export async function POST(req) {
 
     // 1) Actualizar consentimiento de marketing con la mutación dedicada
     const consentMutation = `
-      mutation UpdateConsent($customerId: ID!, $emailMarketingConsent: CustomerEmailMarketingConsentInput!) {
-        customerEmailMarketingConsentUpdate(
-          customerId: $customerId,
-          emailMarketingConsent: $emailMarketingConsent
-        ) {
+      mutation UpdateConsent($input: CustomerEmailMarketingConsentUpdateInput!) {
+        customerEmailMarketingConsentUpdate(input: $input) {
           customer { id email emailMarketingConsent { marketingState } }
           userErrors { field message }
         }
       }
     `;
     const consentVars = {
-      customerId,
-      emailMarketingConsent: {
-        marketingState: "SUBSCRIBED",
-        marketingOptInLevel: "SINGLE_OPT_IN",
-        consentUpdatedAt: nowISO,
+      input: {
+        customerId,
+        emailMarketingConsent: {
+          marketingState: "SUBSCRIBED",
+          marketingOptInLevel: "SINGLE_OPT_IN",
+          consentUpdatedAt: nowISO,
+        },
       },
     };
     const consentData = await shopifyAdmin(consentMutation, consentVars);
