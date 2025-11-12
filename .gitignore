@@ -48,6 +48,8 @@ CON
 
 # heavy media (keep out of git; use CDN/LFS)
 public/fondo/
+# allow the selected background video to be committed
+!public/fondo/FONDO SIN SOMBRA.mp4
 *.mov
 *.mp4
 *.avi

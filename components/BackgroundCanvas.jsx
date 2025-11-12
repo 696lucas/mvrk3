@@ -45,14 +45,13 @@ export default function BackgroundCanvas() {
         loop
         muted
         playsInline
-        preload="metadata"
+        preload="auto"
         poster="/frames/frame_001.webp"
-        src="/fondo/FONDO SIN SOMBRA.mp4"
-        style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', objectFit: 'cover', zIndex: 0, display: 'block', background: '#000' }}
+        style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', objectFit: 'cover', zIndex: 0, display: 'block', background: '#000', pointerEvents: 'none' }}
       >
-        {/* Fuentes opcionales para compatibilidad */}
+        {/* Fuentes para compatibilidad */}
         <source src="/fondo/FONDO SIN SOMBRA.mp4" type="video/mp4" />
-        <source src="/fondo/FONDO ANIMADO WEB.mov" type="video/quicktime" />
+        <source src="/fondo/FONDO%20ANIMADO%20WEB.mov" type="video/quicktime" />
       </video>
       {failed && (
         <img
