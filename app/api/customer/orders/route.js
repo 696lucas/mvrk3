@@ -44,7 +44,8 @@ export async function GET(req) {
   });
 
   if (!r.ok) {
-    return new Response(JSON.stringify({ orders: [] }), {
+    const t = await r.text().catch(() => "");
+    return new Response(JSON.stringify({ orders: [], error: t }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
@@ -59,4 +60,3 @@ export async function GET(req) {
     headers: { "Content-Type": "application/json" },
   });
 }
-
