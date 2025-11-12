@@ -2,7 +2,7 @@
   try {
     const { email } = await req.json();
     if (!email || !/.+@.+\..+/.test(email)) {
-      return new Response(JSON.stringify({ ok: false, error: 'Email invalido' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ ok: false, error: 'Email inválido' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
 
     const domain = process.env.SHOPIFY_DOMAIN || 'qhzkkr-2d.myshopify.com';
@@ -77,3 +77,4 @@
     return new Response(JSON.stringify({ ok: false, error: 'Error del servidor' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 }
+
