@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./catalogo.css";
 import ModelsLoader from "../ModelsLoader";
 import PBConfig from "../PBConfig";
@@ -18,16 +18,33 @@ import NewsletterModal from "../NewsletterModal";
 
 export default function CatalogoPage() {
   const [view, setView] = useState("catalog"); // 'catalog' | 'orders'
+  const ordersAnchorRef = useRef(null);
 
   useEffect(() => {
+    // helper para hacer scroll al panel de pedidos
+    const scrollToOrders = () => {
+      try {
+        const el =
+          ordersAnchorRef.current ||
+          document.getElementById("pb-orders-anchor") ||
+          document.querySelector(".pb-orders");
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      } catch {}
+    };
+
     // global toggles
-    window.showOrders = () => setView("orders");
+    window.showOrders = () => {
+      setView("orders");
+      // intenta desplazar después de renderizar
+      setTimeout(scrollToOrders, 50);
+      setTimeout(scrollToOrders, 300);
+    };
     window.showCatalog = () => setView("catalog");
     // abrir pedidos automáticamente si viene ?show=orders
     try {
       const params = new URLSearchParams(window.location.search);
       if ((params.get("show") || "").toLowerCase() === "orders") {
-        setView("orders");
+        window.showOrders();
       }
     } catch {}
     const heroEls = Array.from(document.querySelectorAll('header.hero, header.hero img'));
@@ -42,6 +59,8 @@ export default function CatalogoPage() {
       <ModelsLoader />
       <BackgroundCanvas />
       <Hero />
+      {/* ancla para hacer scroll al abrir pedidos */}
+      <div id="pb-orders-anchor" ref={ordersAnchorRef} />
       {view === 'orders' ? <OrdersView /> : <Collage />}
       <MusicDrawer />
       <ProductModal />
