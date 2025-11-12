@@ -23,6 +23,13 @@ export default function CatalogoPage() {
     // global toggles
     window.showOrders = () => setView("orders");
     window.showCatalog = () => setView("catalog");
+    // abrir pedidos automáticamente si viene ?show=orders
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if ((params.get("show") || "").toLowerCase() === "orders") {
+        setView("orders");
+      }
+    } catch {}
     const heroEls = Array.from(document.querySelectorAll('header.hero, header.hero img'));
     const onHero = () => setView("catalog");
     heroEls.forEach(el => el.addEventListener('click', onHero));
