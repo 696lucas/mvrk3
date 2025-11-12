@@ -43,8 +43,8 @@ export async function POST(req) {
     const createMutation = `
       mutation CreateCustomer($input: CustomerInput!) {
         customerCreate(input: $input) {
-          customer { id email emailMarketingConsent { state } }
-          userErrors { field message code }
+          customer { id email emailMarketingConsent { marketingState } }
+          userErrors { field message }
         }
       }
     `;
@@ -53,7 +53,7 @@ export async function POST(req) {
         email,
         tags: ["newsletter", "pb-newsletter"],
         emailMarketingConsent: {
-          state: "SUBSCRIBED",
+          marketingState: "SUBSCRIBED",
           marketingOptInLevel: "SINGLE_OPT_IN",
           consentUpdatedAt: nowISO,
         },
@@ -65,7 +65,10 @@ export async function POST(req) {
       return new Response(JSON.stringify({ ok: true }), { status: 200 });
     }
 
-    const alreadyExists = createErrors.some(e => (e.code || "").includes("ALREADY") || (e.message || "").toLowerCase().includes("already"));
+    const alreadyExists = createErrors.some(e => {
+      const m = (e?.message || "").toLowerCase();
+      return m.includes("already") || m.includes("taken");
+    });
     if (!alreadyExists) {
       return new Response(
         JSON.stringify({ ok: false, error: createErrors.map(e => e.message).join(" / ") || "Error creando cliente" }),
@@ -90,8 +93,8 @@ export async function POST(req) {
     const updateMutation = `
       mutation UpdateCustomer($id: ID!, $input: CustomerInput!) {
         customerUpdate(id: $id, input: $input) {
-          customer { id email emailMarketingConsent { state } }
-          userErrors { field message code }
+          customer { id email emailMarketingConsent { marketingState } }
+          userErrors { field message }
         }
       }
     `;
@@ -99,7 +102,7 @@ export async function POST(req) {
       id: customerId,
       input: {
         emailMarketingConsent: {
-          state: "SUBSCRIBED",
+          marketingState: "SUBSCRIBED",
           marketingOptInLevel: "SINGLE_OPT_IN",
           consentUpdatedAt: nowISO,
         },
