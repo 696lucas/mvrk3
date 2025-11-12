@@ -91,16 +91,16 @@ export async function POST(req) {
     }
 
     const updateMutation = `
-      mutation UpdateCustomer($id: ID!, $input: CustomerInput!) {
-        customerUpdate(id: $id, input: $input) {
+      mutation UpdateCustomer($input: CustomerInput!) {
+        customerUpdate(input: $input) {
           customer { id email emailMarketingConsent { marketingState } }
           userErrors { field message }
         }
       }
     `;
     const updateVars = {
-      id: customerId,
       input: {
+        id: customerId,
         emailMarketingConsent: {
           marketingState: "SUBSCRIBED",
           marketingOptInLevel: "SINGLE_OPT_IN",
