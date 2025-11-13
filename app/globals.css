@@ -24,3 +24,28 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+/* Capa global fija a pantalla completa (para que absolute no “salte”) */
+#ipod-layer{
+  position: fixed;
+  inset: 0;
+  z-index: 1000;         /* por encima de cualquier vista */
+  pointer-events: none;  /* no bloquea clics del sitio */
+}
+
+/* El iPod en absolute dentro de la capa fija */
+#ipod-layer .ipod{
+  position: absolute;    /* <- como pedías: absolute */
+  left: 16px;
+  bottom: 16px;
+  width: clamp(240px, 28vw, 360px);
+  pointer-events: auto;  /* clicable */
+}
+
+/* Evita mezclas raras con el vídeo/fondos */
+#ipod-layer, #ipod-layer *{
+  mix-blend-mode: normal !important;
+}
+
+@media (max-width: 640px){
+  #ipod-layer .ipod{ width: clamp(220px, 60vw, 320px); }
+}

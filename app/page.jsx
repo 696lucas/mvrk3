@@ -1,8 +1,6 @@
-'use client';
+"use client";
+import AppShell from "../components/AppShell";
 
-import CatalogoPage from '../components/catalogo/catalogo';
-
-export default function HomePage() {
-  return <CatalogoPage />;
+export default function Home(){
+  return <AppShell />;
 }
-
