@@ -1,7 +1,6 @@
 "use client";
-import LandingPB from "../components/LandingPB";
+import AppShell from "../components/AppShell";
 
-export default function Home() {
-  return <LandingPB />;
+export default function Home(){
+  return <AppShell />;
 }
-
