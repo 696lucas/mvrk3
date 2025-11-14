@@ -1,14 +1,47 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useView } from "./view/ViewContext";
 
 export default function LandingPB() {
   const { setView } = useView();
   const [hovered, setHovered] = useState(null);
+  const [isMerchTransition, setIsMerchTransition] = useState(false);
+  const [isMerchReturn, setIsMerchReturn] = useState(() => {
+    if (typeof window !== "undefined" && window.__pbFromMerch) {
+      try {
+        window.__pbFromMerch = false;
+      } catch {}
+      return true;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (!isMerchReturn) return;
+    const timer = setTimeout(() => setIsMerchReturn(false), 900);
+    return () => clearTimeout(timer);
+  }, [isMerchReturn]);
+
+  const mainClassName = [
+    hovered ? `hover-${hovered}` : "",
+    isMerchTransition ? "merch-transition" : "",
+    isMerchReturn ? "merch-return" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const handleMerchClick = () => {
+    if (isMerchTransition) return;
+    setHovered("merch");
+    setIsMerchTransition(true);
+    setTimeout(() => {
+      setView("merch");
+    }, 900);
+  };
 
   return (
     <main
-      className={hovered ? `hover-${hovered}` : ""}
+      className={mainClassName}
       style={{
         "--scale": 1.0, // escala global
         "--shows": 1.14, // ajuste fino solo SHOWS
@@ -17,16 +50,6 @@ export default function LandingPB() {
         "--merchShift": "20vw",
       }}
     >
-      <video
-        className="bg"
-        src="/landing/FONDO.mp4"
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-      />
-
       {/* SHOWS (solo decorativo, el click va en shows-hitbox) */}
       <button
         type="button"
@@ -72,7 +95,7 @@ export default function LandingPB() {
       {/* Hitbox rombo para MERCH */}
       <div
         className="merch-hitbox"
-        onClick={() => setView("merch")}
+        onClick={handleMerchClick}
         onMouseEnter={() => setHovered("merch")}
         onMouseLeave={() => setHovered(null)}
         aria-label="Abrir merch"
@@ -90,15 +113,6 @@ export default function LandingPB() {
           --merch: 1;
         }
 
-        .bg {
-          position: fixed;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          z-index: 0;
-        }
-
         .slot {
           position: absolute;
           z-index: 3;
@@ -108,6 +122,9 @@ export default function LandingPB() {
           padding: 0;
           cursor: default; /* flecha normal por defecto */
           transition: transform 180ms ease-out, filter 180ms ease-out;
+          /* leve movimiento para que la casita "respire" */
+          translate: 0 0;
+          animation: pb-slot-breathe 5200ms ease-in-out infinite;
         }
 
         .slot img {
@@ -131,6 +148,13 @@ export default function LandingPB() {
         }
         .slot.merch img {
           pointer-events: none;
+        }
+
+        /* Pausar la respiracion durante transiciones grandes */
+        main.merch-transition .slot,
+        main.merch-return .slot {
+          animation: none;
+          translate: 0 0;
         }
 
         /* width = clamp(...) * var(--scale) * factor_individual */
@@ -177,6 +201,106 @@ export default function LandingPB() {
           transform: translateX(var(--merchShift)) rotate(1deg)
             translateY(-0.8vh) scale(1.05);
           filter: brightness(1.08);
+        }
+
+        /* Animacion de "respirar" suave usando translate
+           (no interfiere con los transform existentes) */
+        @keyframes pb-slot-breathe {
+          0% {
+            translate: 0 0;
+          }
+          50% {
+            translate: 0 -0.6vh;
+          }
+          100% {
+            translate: 0 0;
+          }
+        }
+
+        /* Transición hacia MERCH: las señales se hunden hacia abajo */
+        main.merch-transition .slot {
+          cursor: default;
+          transition: transform 900ms cubic-bezier(0.3, 0, 0.15, 1),
+            filter 360ms ease-out, opacity 550ms ease-in;
+        }
+
+        main.merch-transition .slot.shows,
+        main.merch-transition .slot.center,
+        main.merch-transition .slot.merch {
+          opacity: 0;
+        }
+
+        main.merch-transition .slot.shows {
+          transition-delay: 60ms;
+          transform: rotate(-6deg) translateY(120vh) scale(0.9);
+        }
+        main.merch-transition .slot.center {
+          transition-delay: 140ms;
+          transform: translateX(-50%) rotate(-8deg) translateY(120vh)
+            scale(0.9);
+        }
+        main.merch-transition .slot.merch {
+          transition-delay: 220ms;
+          transform: translateX(var(--merchShift)) rotate(8deg)
+            translateY(120vh) scale(0.9);
+        }
+
+        /* Desactivar los clics mientras las traga la tierra */
+        main.merch-transition .shows-hitbox,
+        main.merch-transition .merch-hitbox {
+          pointer-events: none;
+        }
+
+        /* Vuelta desde MERCH: las señales salen desde abajo hacia su sitio */
+        main.merch-return .slot {
+          cursor: default;
+          animation-duration: 900ms;
+          animation-timing-function: cubic-bezier(0.3, 0, 0.15, 1);
+          animation-fill-mode: forwards;
+        }
+        main.merch-return .slot.shows {
+          animation-name: merch-return-shows;
+        }
+        main.merch-return .slot.center {
+          animation-name: merch-return-center;
+        }
+        main.merch-return .slot.merch {
+          animation-name: merch-return-merch;
+        }
+
+        @keyframes merch-return-shows {
+          from {
+            transform: rotate(-6deg) translateY(120vh) scale(0.9);
+            opacity: 0;
+          }
+          to {
+            transform: rotate(-2deg) translateY(0) scale(1);
+            opacity: 1;
+          }
+        }
+        @keyframes merch-return-center {
+          from {
+            transform: translateX(-50%) rotate(-8deg) translateY(120vh)
+              scale(0.9);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(-50%) rotate(-3deg) translateY(0)
+              scale(1);
+            opacity: 1;
+          }
+        }
+        @keyframes merch-return-merch {
+          from {
+            transform: translateX(var(--merchShift)) rotate(8deg)
+              translateY(120vh) scale(0.9);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(var(--merchShift)) rotate(1deg)
+              translateY(0) scale(1);
+            opacity: 1;
+          }
         }
 
         /* 🔷 ROMBO SHOWS (ajústalo a mano igual que hiciste con MERCH) */

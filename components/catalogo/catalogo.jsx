@@ -4,10 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import "./catalogo.css";
 import ModelsLoader from "../ModelsLoader";
 import PBConfig from "../PBConfig";
-import BackgroundCanvas from "../BackgroundCanvas";
 import Hero from "../Hero";
 import Collage from "../Collage";
-import MusicDrawer from "../MusicDrawer";
 import ProductModal from "../ProductModal";
 import Footer from "../Footer";
 import TopIcons from "../TopIcons";
@@ -57,12 +55,10 @@ export default function CatalogoPage() {
     <div>
       <PBConfig />
       <ModelsLoader />
-      <BackgroundCanvas />
       <Hero />
       {/* ancla para hacer scroll al abrir pedidos */}
       <div id="pb-orders-anchor" ref={ordersAnchorRef} />
       {view === 'orders' ? <OrdersView /> : <Collage />}
-      <MusicDrawer />
       <ProductModal />
       <CartDrawer />
       <AccountPopup />

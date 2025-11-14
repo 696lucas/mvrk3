@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 const VIDEOS = [
@@ -20,14 +20,24 @@ const VIDEOS = [
 ];
 
 export default function MusicDrawer() {
+  const [isMobile, setIsMobile] = useState(false);
+  const [isOpenMobile, setIsOpenMobile] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mq = window.matchMedia('(max-width:768px)');
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+
   useEffect(() => {
     try { window.PB_MUSIC_OWNER = 'react'; } catch (_) {}
-    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width:768px)').matches) {
-      return;
-    }
 
     const video = document.getElementById('ipodVideo');
     if (!video) return;
+
     const ui = {
       title: document.getElementById('ipodTitle'),
       artist: document.getElementById('ipodArtist'),
@@ -37,7 +47,9 @@ export default function MusicDrawer() {
       wheel: document.getElementById('ipodWheel'),
     };
 
-    let i = 0, interacted = false, keyboardEnabled = false;
+    let i = 0;
+    let interacted = false;
+    let keyboardEnabled = false;
     const ipodScreen = document.querySelector('.ipod-screen');
 
     const onLoadedMeta = () => {
@@ -49,6 +61,7 @@ export default function MusicDrawer() {
 
     let history = [];
     let bag = [];
+
     function shuffleLocal(a) {
       for (let j = a.length - 1; j > 0; j--) {
         const k = Math.floor(Math.random() * (j + 1));
@@ -56,25 +69,32 @@ export default function MusicDrawer() {
       }
       return a;
     }
+
     function refillBag(excludeIndex) {
       const candidates = [...Array(VIDEOS.length).keys()].filter(idx => idx !== excludeIndex);
       bag = shuffleLocal(candidates);
     }
+
     function loadVideo(index, autoplay = false) {
       i = (index + VIDEOS.length) % VIDEOS.length;
       const v = VIDEOS[i];
       if (ui.title) ui.title.textContent = v.title || '';
       if (ui.artist) ui.artist.textContent = v.artist || '';
       video.src = v.src;
-      if (v.poster) video.setAttribute('poster', v.poster); else video.removeAttribute('poster');
-      if (autoplay) { video.play().catch(() => {}); }
+      if (v.poster) video.setAttribute('poster', v.poster);
+      else video.removeAttribute('poster');
+      if (autoplay) {
+        video.play().catch(() => {});
+      }
     }
+
     function next() {
       if (!bag.length) refillBag(i);
       history.push(i);
       const ni = bag.shift();
       loadVideo(ni, true);
     }
+
     function prev() {
       if (history.length) {
         const ni = history.pop();
@@ -83,6 +103,7 @@ export default function MusicDrawer() {
         loadVideo(i - 1, true);
       }
     }
+
     async function togglePlay() {
       try {
         if (video.paused) {
@@ -94,12 +115,22 @@ export default function MusicDrawer() {
         }
       } catch (_e) {}
     }
-    function stopPlayback() { try { video.pause(); video.currentTime = 0; } catch (_) {} }
+
+    function stopPlayback() {
+      try {
+        video.pause();
+        video.currentTime = 0;
+      } catch (_) {}
+    }
 
     const onPrev = () => prev();
     const onNext = () => next();
     const onPlay = () => togglePlay();
-    const onPlayDbl = (e) => { e.preventDefault(); stopPlayback(); };
+    const onPlayDbl = (e) => {
+      e.preventDefault();
+      stopPlayback();
+    };
+
     ui.prev && ui.prev.addEventListener('click', onPrev);
     ui.next && ui.next.addEventListener('click', onNext);
     ui.play && ui.play.addEventListener('click', onPlay);
@@ -112,8 +143,13 @@ export default function MusicDrawer() {
       if (!keyboardEnabled) return;
       const t = e.target;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
-      if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
-      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        next();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prev();
+      }
     };
     document.addEventListener('keydown', onKeyDown);
 
@@ -132,15 +168,25 @@ export default function MusicDrawer() {
     });
 
     // clickwheel
-    let dragging = false, lastA = null, accum = 0;
+    let dragging = false;
+    let lastA = null;
+    let accum = 0;
     const STEP = 70;
+
     function angle(e) {
       const r = ui.wheel.getBoundingClientRect();
-      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
       const p = e.touches ? e.touches[0] : e;
       return Math.atan2(p.clientY - cy, p.clientX - cx) * 180 / Math.PI;
     }
-    function start(e) { dragging = true; lastA = angle(e); e.preventDefault(); }
+
+    function start(e) {
+      dragging = true;
+      lastA = angle(e);
+      e.preventDefault();
+    }
+
     function move(e) {
       if (!dragging) return;
       const a = angle(e);
@@ -148,15 +194,23 @@ export default function MusicDrawer() {
       lastA = a;
       accum += da;
       if (Math.abs(accum) > STEP) {
-        if (accum > 0) next(); else prev();
+        if (accum > 0) next();
+        else prev();
         accum = 0;
       }
       e.preventDefault();
     }
-    function end() { dragging = false; lastA = null; accum = 0; }
+
+    function end() {
+      dragging = false;
+      lastA = null;
+      accum = 0;
+    }
+
     const onTouchStart = (e) => start(e);
     const onTouchMove = (e) => move(e);
     const onTouchEnd = () => end();
+
     ui.wheel && ui.wheel.addEventListener('mousedown', onTouchStart);
     document.addEventListener('mousemove', onTouchMove);
     document.addEventListener('mouseup', onTouchEnd);
@@ -186,14 +240,24 @@ export default function MusicDrawer() {
     };
   }, []);
 
+  const handleTriggerClick = (e) => {
+    if (!isMobile) return;
+    try { e.preventDefault(); } catch (_) {}
+    setIsOpenMobile(open => !open);
+  };
+
+  const drawerClassName = `music-drawer${isMobile && isOpenMobile ? ' is-open-mobile' : ''}`;
+
   return (
-    <aside className="music-drawer" id="musicDrawer">
+    <aside className={drawerClassName} id="musicDrawer">
       <button
         className="music-drawer__trigger"
         id="musicTrigger"
         aria-controls="musicPanel"
         aria-expanded="false"
         aria-label="Abrir reproductor"
+        type="button"
+        onClick={handleTriggerClick}
       >
         <Image
           className="music-drawer__icon"
@@ -216,9 +280,9 @@ export default function MusicDrawer() {
               </div>
             </div>
             <div className="ipod-wheel" id="ipodWheel">
-              <button className="ipod-hotzone prev" id="btnPrev" aria-label="Anterior" title="Anterior"></button>
-              <button className="ipod-hotzone next" id="btnNext" aria-label="Siguiente" title="Siguiente"></button>
-              <button className="ipod-hotzone play" id="btnPlay" aria-label="Play/Pause" title="Play/Pause"></button>
+              <button className="ipod-hotzone prev" id="btnPrev" aria-label="Anterior" title="Anterior" />
+              <button className="ipod-hotzone next" id="btnNext" aria-label="Siguiente" title="Siguiente" />
+              <button className="ipod-hotzone play" id="btnPlay" aria-label="Play/Pause" title="Play/Pause" />
             </div>
           </div>
         </div>

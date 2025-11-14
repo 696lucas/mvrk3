@@ -164,7 +164,6 @@ main{ position:relative; z-index:1; width:100%; }
 .music-drawer:has(.music-drawer__panel:hover) .ipod-photo{
   transform: translateX(0) scale(1); opacity:1;
 }
-@media (max-width:768px){ .music-drawer{ display:none !important; } }
 
 /* =========================================================
    PRODUCT MODAL (página completa + blur de fondo)
@@ -345,7 +344,7 @@ main{ position:relative; z-index:1; width:100%; }
 }
 /* Iconos siempre por encima del modal (y clicables) */
 .pb-top-icons{
-  position: fixed; z-index: 999999 !important; /* más alto que #pbProductModal */
+  position: fixed; /* más alto que #pbProductModal */
   pointer-events: auto !important; isolation: isolate; /* evita halos con backdrop-filter */ mix-blend-mode: normal;
 }
 /* Por si algún reset les quita los eventos */
@@ -419,6 +418,13 @@ main{ position:relative; z-index:1; width:100%; }
 .pb-cart__foot{ border-top:1px solid var(--pb-line); padding:14px 16px; display:grid; gap:10px; }
 .pb-cart__row{ display:flex; justify-content:space-between; align-items:center; }
 .pb-btn{ appearance:none; border:0; border-radius:12px; padding:14px 16px; font-weight:800; cursor:pointer; }
+
+/* Ajuste posición botón iPod solo en móvil (merch) */
+@media (max-width:768px){
+  .music-drawer__trigger{
+    top:26%;
+  }
+}
 .pb-btn--pay{ background:#000; color:#fff; }
 .pb-btn--shop{ background:#5b3df5; color:#fff; }
 
@@ -432,6 +438,19 @@ main{ position:relative; z-index:1; width:100%; }
 .pb-minicart.is-open{ opacity:1; transform:translateY(0); }
 .pb-minicart__title{ font-weight:800; font-size:14px; margin:0 0 6px; }
 .pb-minicart__row{ display:flex; justify-content:space-between; margin:6px 0 10px; font-size:13px; opacity:.9; }
+
+/* iPod móvil (merch): activar interacciones y posición del botón */
+@media (max-width:768px){
+  .music-drawer{
+    pointer-events:auto !important;
+  }
+  .music-drawer__panel{
+    pointer-events:auto !important;
+  }
+  .music-drawer__trigger{
+    top:26%;
+  }
+}
 .pb-minicart__actions{ display:flex; gap:8px; }
 /* ===== Tallas en el modal ===== */
 .pb-prod-sizes-block{

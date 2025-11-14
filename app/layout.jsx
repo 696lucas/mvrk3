@@ -1,7 +1,8 @@
 import { Geist, Geist_Mono } from 'next/font/google';
-import './globals.css';
-import '../components/ipod.css';
-import MusicDrawer from '../components/MusicDrawer';
+import "./globals.css";
+import "../components/ipod.css";
+import MusicDrawer from "../components/MusicDrawer";
+import BackgroundCanvas from "../components/BackgroundCanvas";
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <BackgroundCanvas />
         {children}
 
         {/* iPod global en todas las páginas */}

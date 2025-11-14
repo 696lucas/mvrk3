@@ -117,6 +117,31 @@
 }
 
 @media (max-width:768px){
-  .ipod-photo{ display:none !important; }
-  .music-drawer{ display:none !important; }
+  .music-drawer{
+    pointer-events:auto;
+  }
+  .music-drawer__panel{
+    pointer-events:auto;
+    width: 100vw;
+    justify-content: center;
+  }
+  .music-drawer.is-open-mobile .music-drawer__panel{
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .music-drawer.is-open-mobile .music-drawer__trigger{
+    opacity: 0;
+    pointer-events: none;
+  }
+  /* Fuerza a que el iPod sea visible en el panel móvil,
+     aunque catálogo tenga un .ipod-photo{display:none!important;} */
+  .music-drawer .ipod-photo{
+    display:block !important;
+    margin: 0 auto;
+    transform: none;
+    width: min(280px, 80vw);
+  }
 }
+
+

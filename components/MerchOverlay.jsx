@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useRef } from "react";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import CatalogoPage from "./catalogo/catalogo";
 import { useView } from "./view/ViewContext";
 
@@ -8,8 +9,18 @@ export default function MerchOverlay() {
   const panelRef = useRef(null);
   const closeBtnRef = useRef(null);
   const prevFocusRef = useRef(null);
+  const [isClosing, setIsClosing] = useState(false);
 
-  const close = () => setView("landing");
+  const close = () => {
+    if (isClosing) return;
+    setIsClosing(true);
+    try {
+      window.__pbFromMerch = true;
+    } catch {}
+    setTimeout(() => {
+      setView("landing");
+    }, 900);
+  };
 
   useEffect(() => {
     const body = document.body;
@@ -41,7 +52,7 @@ export default function MerchOverlay() {
 
   return (
     <div
-      className="pb-merch-overlay"
+      className={`pb-merch-overlay${isClosing ? " is-closing" : ""}`}
       role="dialog"
       aria-modal="true"
       aria-label="Catálogo"
@@ -51,22 +62,79 @@ export default function MerchOverlay() {
         className="pb-merch-close"
         aria-label="Cerrar catálogo"
         onClick={close}
-        ref={closeBtnRef}
-      >
-        ×
+        ref={closeBtnRef}>
+      <Image src="/icon/casa.png" alt="" aria-hidden="true" width={32} height={32} className="pb-merch-close-icon" />
       </button>
       <CatalogoPage />
       <style jsx>{`
-        .pb-merch-overlay{ position:fixed; inset:0; z-index:80; background:transparent; overflow:auto; }
-        .pb-merch-close{
-          position:fixed; left:12px; top:12px; z-index:999999; width:40px; height:40px;
-          border-radius:10px; border:1px solid rgba(255,255,255,.3); background:rgba(0,0,0,.4); color:#fff;
-          font-size:26px; line-height:1; display:grid; place-items:center; cursor:pointer;
+        .pb-merch-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 80;
+          background: transparent;
+          overflow: auto;
+          opacity: 0;
+          transform: translateY(-40px);
+          animation: pb-merch-enter 520ms cubic-bezier(0.2, 0.8, 0.2, 1)
+            forwards;
         }
-        .pb-merch-close:hover{ background:rgba(0,0,0,.55); }
-        @media (max-width:768px){ .pb-merch-close{ width:34px; height:34px; font-size:22px; left:8px; top:8px; } }
+        .pb-merch-overlay.is-closing {
+          animation: pb-merch-exit 400ms ease-out forwards;
+        }
+        .pb-merch-close {
+          position: fixed;
+          left: 12px;
+          top: 12px;
+          z-index: 999999;
+          border: none;
+          background: transparent;
+          padding: 0;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+        }
+        .pb-merch-close-icon {
+          width: 32px;
+          height: 32px;
+          display: block;
+          object-fit: contain;
+          transform-origin: center;
+          transform: scale(1); /* cambia este scale para el tamaño */
+          transition: transform 0.15s ease, opacity 0.15s ease;
+        }
+        .pb-merch-close:hover {
+          background: transparent;
+        }
+        .pb-merch-close:hover .pb-merch-close-icon,
+        .pb-merch-close:focus-visible .pb-merch-close-icon {
+          transform: scale(1.08);
+          opacity: 0.9;
+        }
+        @keyframes pb-merch-enter {
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes pb-merch-exit {
+          from {
+            opacity: 1;
+          }
+          to {
+            opacity: 0;
+          }
+        }
+        @media (max-width: 768px) {
+          .pb-merch-close {
+            left: 8px;
+            top: 8px;
+          }
+        }
       `}</style>
     </div>
   );
 }
+
+
 
