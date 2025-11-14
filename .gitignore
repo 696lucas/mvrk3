@@ -61,3 +61,6 @@ public/fondo/
 .vscode/
 .idea/
 Thumbs.db
+
+# local backups (do not commit)
+backups/
