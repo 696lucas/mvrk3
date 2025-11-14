@@ -86,10 +86,7 @@ export default function LandingPB() {
         aria-label="Ir a Merch"
         id="btn-open-merch"
       >
-        <img
-          src="/landing/SENAL_MERCH.png"
-          alt="Merch"
-        />
+        <img src="/landing/SENAL_MERCH.png" alt="Merch" />
       </button>
 
       {/* Hitbox rombo para MERCH */}
@@ -100,6 +97,25 @@ export default function LandingPB() {
         onMouseLeave={() => setHovered(null)}
         aria-label="Abrir merch"
       />
+
+      {/* Versión móvil: lettering arriba + señal móvil centrada (solo visible en mobile via CSS) */}
+      <div className="slot mobile-title" aria-hidden="true">
+        <img
+          src="/landing/SENAL_PORTATE_BIEN.png"
+          alt="P��rtate Bien"
+        />
+      </div>
+      <button
+        type="button"
+        className="slot mobile-main"
+        aria-label="Ir a Merch"
+        onClick={handleMerchClick}
+      >
+        <img
+          src="/landing/movil/señal_ movil.png"
+          alt="Merch"
+        />
+      </button>
 
       <style jsx>{`
         main {
@@ -125,6 +141,12 @@ export default function LandingPB() {
           /* leve movimiento para que la casita "respire" */
           translate: 0 0;
           animation: pb-slot-breathe 5200ms ease-in-out infinite;
+        }
+
+        /* Slots específicos de móvil: ocultos por defecto (solo se activan en media query) */
+        .mobile-title,
+        .mobile-main {
+          display: none;
         }
 
         .slot img {
@@ -353,20 +375,47 @@ export default function LandingPB() {
           }
         }
 
+        /* ===== Versión móvil (NO tocar escritorio) ===== */
         @media (max-width: 640px) {
-          .shows {
-            left: 4vw;
-            bottom: 12vh;
-            transform: rotate(-5deg);
+          /* Oculta señales y hitboxes de escritorio */
+          .slot.shows,
+          .slot.center,
+          .slot.merch,
+          .shows-hitbox,
+          .merch-hitbox {
+            display: none;
           }
-          .center {
-            bottom: 7vh;
+
+          /* Activa layout móvil */
+          .mobile-title,
+          .mobile-main {
+            display: block;
+            animation: none;
+          }
+
+          .mobile-title {
+            position: absolute;
+            left: 50%;
+            top: 10vh;
             transform: translateX(-50%) rotate(-3deg);
+            width: min(82vw, 420px);
+            z-index: 3;
           }
-          .merch {
-            right: 4vw;
-            bottom: 10vh;
-            transform: rotate(3deg);
+
+          .mobile-main {
+            position: absolute;
+            left: 50%;
+            top: 32vh;
+            transform: translateX(-50%);
+            width: min(86vw, 460px);
+            z-index: 3;
+            cursor: pointer;
+          }
+
+          .mobile-main img,
+          .mobile-title img {
+            width: 100%;
+            height: auto;
           }
         }
       `}</style>
