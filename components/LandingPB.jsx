@@ -376,7 +376,7 @@ export default function LandingPB() {
         }
 
         /* ===== Versión móvil (NO tocar escritorio) ===== */
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
           /* Oculta señales y hitboxes de escritorio */
           .slot.shows,
           .slot.center,
@@ -418,7 +418,16 @@ export default function LandingPB() {
             height: auto;
           }
         }
+
+        /* Override extra: en móvil ocultamos el título suelto de "Pórtate bien"
+           para que solo quede la señal vertical móvil centrada */
+        @media (max-width: 768px) {
+          .mobile-title {
+            display: none;
+          }
+        }
       `}</style>
     </main>
   );
 }
+
