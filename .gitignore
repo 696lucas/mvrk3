@@ -46,10 +46,9 @@ next-env.d.ts
 # Windows reserved device name accidentally created; ignore to avoid add failures
 CON
 
-# heavy media (keep out of git; use CDN/LFS)
+# heavy media / backups (keep out of git; use CDN/LFS)
 public/fondo/
 *.mov
-*.mp4
 *.avi
 *.mkv
 *.wav
