@@ -1,16 +1,19 @@
 "use client";
+import { useState } from "react";
 import { useView } from "./view/ViewContext";
 
 export default function LandingPB() {
   const { setView } = useView();
+  const [hovered, setHovered] = useState(null);
 
   return (
     <main
+      className={hovered ? `hover-${hovered}` : ""}
       style={{
-        "--scale": 1.0,   // escala global
-        "--shows": 1.14,  // ajuste fino solo SHOWS
-        "--center": 3,    // ajuste fino solo Pórtate Bien
-        "--merch": 3.75,  // ajuste fino solo MERCH
+        "--scale": 1.0, // escala global
+        "--shows": 1.14, // ajuste fino solo SHOWS
+        "--center": 3, // ajuste fino solo Pórtate Bien
+        "--merch": 3.75, // ajuste fino solo MERCH
         "--merchShift": "20vw",
       }}
     >
@@ -40,6 +43,8 @@ export default function LandingPB() {
       <div
         className="shows-hitbox"
         onClick={() => setView("gira")}
+        onMouseEnter={() => setHovered("shows")}
+        onMouseLeave={() => setHovered(null)}
         aria-label="Abrir gira"
       />
 
@@ -68,6 +73,8 @@ export default function LandingPB() {
       <div
         className="merch-hitbox"
         onClick={() => setView("merch")}
+        onMouseEnter={() => setHovered("merch")}
+        onMouseLeave={() => setHovered(null)}
         aria-label="Abrir merch"
       />
 
@@ -100,6 +107,7 @@ export default function LandingPB() {
           border: 0;
           padding: 0;
           cursor: default; /* flecha normal por defecto */
+          transition: transform 180ms ease-out, filter 180ms ease-out;
         }
 
         .slot img {
@@ -159,26 +167,32 @@ export default function LandingPB() {
           );
         }
 
+        /* 🔹 Estados de hover “reactivos” */
+        main.hover-shows .slot.shows {
+          transform: rotate(-2deg) translateY(-0.8vh) scale(1.05);
+          filter: brightness(1.08);
+        }
+
+        main.hover-merch .slot.merch {
+          transform: translateX(var(--merchShift)) rotate(1deg)
+            translateY(-0.8vh) scale(1.05);
+          filter: brightness(1.08);
+        }
+
         /* 🔷 ROMBO SHOWS (ajústalo a mano igual que hiciste con MERCH) */
         .shows-hitbox {
           position: absolute;
           z-index: 4;
-          width: 25vw;      /* TOCA ESTO para encajar al cartel SHOWS */
-          height: 25vw;     /* TOCA ESTO también */
-          left: 1vw;        /* posición aproximada, ajústala en DevTools */
+          width: 25vw; /* TOCA ESTO para encajar al cartel SHOWS */
+          height: 25vw; /* TOCA ESTO también */
+          left: 1vw; /* posición aproximada, ajústala en DevTools */
           bottom: 25vw;
 
           background: transparent; /* pon verde si quieres verlo */
-          cursor: pointer;         /* mano solo aquí */
+          cursor: pointer; /* mano solo aquí */
           pointer-events: auto;
 
-          clip-path: polygon(
-            50% 0%,
-            100% 50%,
-            50% 100%,
-            0% 50%
-          );
-
+          clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
           transform: rotate(-2deg);
           transform-origin: center;
         }
@@ -193,16 +207,10 @@ export default function LandingPB() {
           bottom: 2vw;
 
           background: transparent; /* pon verde si quieres verlo */
-          cursor: pointer;         /* mano solo aquí */
+          cursor: pointer; /* mano solo aquí */
           pointer-events: auto;
 
-          clip-path: polygon(
-            50% 0%,
-            100% 50%,
-            50% 100%,
-            0% 50%
-          );
-
+          clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
           transform: rotate(1deg);
           transform-origin: center;
         }
