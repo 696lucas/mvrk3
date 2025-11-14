@@ -38,6 +38,11 @@ export default function MusicDrawer() {
     const video = document.getElementById('ipodVideo');
     if (!video) return;
 
+    const enableWheelGestures =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      !window.matchMedia('(max-width:768px)').matches;
+
     const ui = {
       title: document.getElementById('ipodTitle'),
       artist: document.getElementById('ipodArtist'),
@@ -171,7 +176,7 @@ export default function MusicDrawer() {
     let dragging = false;
     let lastA = null;
     let accum = 0;
-    const STEP = 70;
+    const STEP = 40;
 
     function angle(e) {
       const r = ui.wheel.getBoundingClientRect();
@@ -211,12 +216,14 @@ export default function MusicDrawer() {
     const onTouchMove = (e) => move(e);
     const onTouchEnd = () => end();
 
-    ui.wheel && ui.wheel.addEventListener('mousedown', onTouchStart);
-    document.addEventListener('mousemove', onTouchMove);
-    document.addEventListener('mouseup', onTouchEnd);
-    ui.wheel && ui.wheel.addEventListener('touchstart', onTouchStart, { passive: false });
-    document.addEventListener('touchmove', onTouchMove, { passive: false });
-    document.addEventListener('touchend', onTouchEnd);
+    if (enableWheelGestures && ui.wheel) {
+      ui.wheel.addEventListener('mousedown', onTouchStart);
+      document.addEventListener('mousemove', onTouchMove);
+      document.addEventListener('mouseup', onTouchEnd);
+      ui.wheel.addEventListener('touchstart', onTouchStart, { passive: false });
+      document.addEventListener('touchmove', onTouchMove, { passive: false });
+      document.addEventListener('touchend', onTouchEnd);
+    }
 
     // initial state
     try { loadVideo(0, false); } catch (_) {}
@@ -231,12 +238,14 @@ export default function MusicDrawer() {
       }
       video.removeEventListener('ended', onEnded);
       document.removeEventListener('keydown', onKeyDown);
-      ui.wheel && ui.wheel.removeEventListener('mousedown', onTouchStart);
-      document.removeEventListener('mousemove', onTouchMove);
-      document.removeEventListener('mouseup', onTouchEnd);
-      ui.wheel && ui.wheel.removeEventListener('touchstart', onTouchStart);
-      document.removeEventListener('touchmove', onTouchMove);
-      document.removeEventListener('touchend', onTouchEnd);
+      if (enableWheelGestures && ui.wheel) {
+        ui.wheel.removeEventListener('mousedown', onTouchStart);
+        document.removeEventListener('mousemove', onTouchMove);
+        document.removeEventListener('mouseup', onTouchEnd);
+        ui.wheel.removeEventListener('touchstart', onTouchStart);
+        document.removeEventListener('touchmove', onTouchMove);
+        document.removeEventListener('touchend', onTouchEnd);
+      }
     };
   }, []);
 
