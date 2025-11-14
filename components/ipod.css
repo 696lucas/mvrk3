@@ -140,15 +140,16 @@
     display:block !important;
     margin: 0 auto;
     transform: none;
-    width: min(280px, 80vw);
+    width: min(300px, 88vw);
   }
   /* Hotzones más grandes para que sea más fácil acertar con el dedo */
   .ipod-wheel{
-    width: 64%;
+    width: 72%;
   }
   .ipod-hotzone{
-    width: 36%;
+    width: 44%;
   }
 }
+
 
 
