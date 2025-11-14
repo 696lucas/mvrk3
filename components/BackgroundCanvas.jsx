@@ -49,7 +49,13 @@ export default function BackgroundCanvas() {
         poster="/frames/frame_001.webp"
         style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', objectFit: 'cover', zIndex: 0, display: 'block', background: '#000', pointerEvents: 'none' }}
       >
-        {/* Fuente principal (solo MP4) */}
+        {/* Móvil: fondo con sombra (FONDO.mp4 en /landing) */}
+        <source
+          src="/landing/FONDO.mp4"
+          type="video/mp4"
+          media="(max-width: 768px)"
+        />
+        {/* Escritorio: fondo sin sombra (por defecto) */}
         <source src="/fondo/FONDO SIN SOMBRA.mp4" type="video/mp4" />
       </video>
       {failed && (

@@ -49,3 +49,19 @@ body {
 @media (max-width: 640px){
   #ipod-layer .ipod{ width: clamp(220px, 60vw, 320px); }
 }
+
+/* Ajuste de encuadre del fondo solo en móvil */
+@media (max-width: 640px){
+  #bg-video{
+    object-position: 3% 80%;
+    /* Zoom ligero para que se vea más grande y tape el negro superior */
+    transform: scale(1.12) translateY(2vh);
+    transform-origin: center;
+  }
+}
+
+
+
+
+
+

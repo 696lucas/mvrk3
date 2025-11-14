@@ -31,6 +31,24 @@ export default function LandingPB() {
     .join(" ");
 
   const handleMerchClick = () => {
+    // En móvil/tablet NO navegamos a merch de momento
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia &&
+      window.matchMedia("(max-width: 768px)").matches
+    ) {
+      return;
+    }
+
+    if (isMerchTransition) return;
+    setHovered("merch");
+    setIsMerchTransition(true);
+    setTimeout(() => {
+      setView("merch");
+    }, 900);
+  };
+
+  const openMerchFromMobile = () => {
     if (isMerchTransition) return;
     setHovered("merch");
     setIsMerchTransition(true);
@@ -92,7 +110,7 @@ export default function LandingPB() {
       {/* Hitbox rombo para MERCH */}
       <div
         className="merch-hitbox"
-        onClick={handleMerchClick}
+        onClick={openMerchFromMobile}
         onMouseEnter={() => setHovered("merch")}
         onMouseLeave={() => setHovered(null)}
         aria-label="Abrir merch"
@@ -109,13 +127,25 @@ export default function LandingPB() {
         type="button"
         className="slot mobile-main"
         aria-label="Ir a Merch"
-        onClick={handleMerchClick}
+        onClick={openMerchFromMobile}
       >
         <img
           src="/landing/movil/señal_ movil.png"
           alt="Merch"
         />
       </button>
+
+      {/* Hitboxes SOLO m��vil (coloreados para que los ajustes a mano) */}
+      <div
+        className="shows-hitbox-mobile"
+        onClick={() => setView("gira")}
+        aria-label="Abrir gira (m��vil)"
+      />
+      <div
+        className="merch-hitbox-mobile"
+        onClick={openMerchFromMobile}
+        aria-label="Abrir merch (m��vil)"
+      />
 
       <style jsx>{`
         main {
@@ -147,6 +177,16 @@ export default function LandingPB() {
         .mobile-title,
         .mobile-main {
           display: none;
+        }
+
+        /* Hitboxes m��viles ocultos por defecto (solo se activan en media query) */
+        .shows-hitbox-mobile,
+        .merch-hitbox-mobile {
+          position: absolute;
+          z-index: 4;
+          display: none;
+          cursor: pointer;
+          pointer-events: auto;
         }
 
         .slot img {
@@ -405,7 +445,7 @@ export default function LandingPB() {
           .mobile-main {
             position: absolute;
             left: 50%;
-            top: 32vh;
+            top: 15vh;
             transform: translateX(-50%);
             width: min(86vw, 460px);
             z-index: 3;
@@ -416,6 +456,36 @@ export default function LandingPB() {
           .mobile-title img {
             width: 100%;
             height: auto;
+          }
+
+          /* HITBOX SHOWS - SOLO M��VIL (verde transl��cido para que lo veas) */
+          .shows-hitbox-mobile {
+            display: block;
+            left: 52%;
+            top: 28vh;
+            transform: translateX(-50%);
+            width: 42vw;
+            height: 8vh;
+            background: transparent;
+          }
+
+          /* HITBOX MERCH - SOLO M��VIL (rojo transl��cido) */
+          .merch-hitbox-mobile {
+            display: block;
+            left: 52%;
+            top: 38vh;
+            transform: translateX(-50%);
+            width: 40vw;
+            height: 7vh;
+            background: transparent;
+          }
+        }
+
+        /* Extra: desactivar clic en hitboxes de SHOWS y MERCH en móvil/tablet */
+        @media (max-width: 1024px) {
+          .shows-hitbox,
+          .merch-hitbox {
+            pointer-events: none !important;
           }
         }
 
@@ -430,4 +500,3 @@ export default function LandingPB() {
     </main>
   );
 }
-
