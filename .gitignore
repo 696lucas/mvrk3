@@ -50,6 +50,7 @@ CON
 public/fondo/
 !public/fondo/
 !public/fondo/*.png
+!public/fondo/*.webm
 *.mov
 *.avi
 *.mkv
