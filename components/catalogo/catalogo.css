@@ -249,7 +249,7 @@ main{ position:relative; z-index:1; width:100%; }
 
 /* ===== Recomendados (debajo del producto) ===== */
 .pb-related-block{
-  border-top:none; background:transparent; margin-top: -100px; /* súbelo/bájalo a tu gusto */
+  border-top:none; background:transparent; margin-top: 16px; /* súbelo/bájalo a tu gusto */
   padding-top:8px; padding-bottom:0;
 }
 .pb-related-title{

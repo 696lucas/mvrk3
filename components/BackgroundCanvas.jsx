@@ -51,12 +51,12 @@ export default function BackgroundCanvas() {
       >
         {/* Móvil: fondo con sombra (FONDO.mp4 en /landing) */}
         <source
-          src="/landing/FONDO.mp4"
+          src="/fondo/cielo.mp4"
           type="video/mp4"
           media="(max-width: 768px)"
         />
         {/* Escritorio: fondo sin sombra (por defecto) */}
-        <source src="/fondo/FONDO SIN SOMBRA.mp4" type="video/mp4" />
+        <source src="/fondo/cielo.mp4" type="video/mp4" />
       </video>
       {failed && (
         <img

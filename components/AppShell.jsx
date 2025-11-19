@@ -2,12 +2,12 @@
 import { ViewProvider, useView } from "./view/ViewContext";
 import LandingPB from "./LandingPB";
 import MerchOverlay from "./MerchOverlay";
-import Gira from "./Gira";
+import Shows from "./Shows";
 
 function Views() {
   const { view } = useView();
   if (view === "merch") return <MerchOverlay />;
-  if (view === "gira") return <Gira />;
+  if (view === "gira") return <Shows />;
   return <LandingPB />; // landing
 }
 

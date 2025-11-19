@@ -7,9 +7,13 @@ export default function LandingPB() {
   const [hovered, setHovered] = useState(null);
   const [isMerchTransition, setIsMerchTransition] = useState(false);
   const [isMerchReturn, setIsMerchReturn] = useState(() => {
-    if (typeof window !== "undefined" && window.__pbFromMerch) {
+    if (
+      typeof window !== "undefined" &&
+      (window.__pbFromMerch || window.__pbFromShows)
+    ) {
       try {
         window.__pbFromMerch = false;
+        window.__pbFromShows = false;
       } catch {}
       return true;
     }
@@ -29,6 +33,15 @@ export default function LandingPB() {
   ]
     .filter(Boolean)
     .join(" ");
+
+  const openShows = () => {
+    if (isMerchTransition) return;
+    setHovered("shows");
+    setIsMerchTransition(true);
+    setTimeout(() => {
+      setView("gira");
+    }, 900);
+  };
 
   const handleMerchClick = () => {
     // En móvil/tablet NO navegamos a merch de momento
@@ -66,8 +79,20 @@ export default function LandingPB() {
         "--center": 3, // ajuste fino solo Pórtate Bien
         "--merch": 3.75, // ajuste fino solo MERCH
         "--merchShift": "20vw",
+        "--floorScale": 1.3, // ya no lo usamos pero lo dejo
+        "--floorX": "0vw",
+        "--floorY": "0vh",
       }}
     >
+      {/* Suelo en home, fijado al bottom y escalado solo por width */}
+      <div className="floor">
+        <img
+          src="/fondo/suelo.png"
+          alt="Suelo"
+          className="floor-image"
+        />
+      </div>
+
       {/* SHOWS (solo decorativo, el click va en shows-hitbox) */}
       <button
         type="button"
@@ -83,7 +108,7 @@ export default function LandingPB() {
       {/* Hitbox rombo para SHOWS */}
       <div
         className="shows-hitbox"
-        onClick={() => setView("gira")}
+        onClick={openShows}
         onMouseEnter={() => setHovered("shows")}
         onMouseLeave={() => setHovered(null)}
         aria-label="Abrir gira"
@@ -96,6 +121,17 @@ export default function LandingPB() {
           alt="Pórtate Bien"
         />
       </div>
+
+      {/* 🔥 FUEGO SOBRE EL CARTEL CENTRAL */}
+      <video
+        className="fuego-video"
+        autoPlay
+        muted
+        loop
+        playsInline
+      >
+        <source src="/landing/FUEGO_ALPHA.webm" type="video/webm" />
+      </video>
 
       {/* MERCH (solo decorativo, el click va en merch-hitbox) */}
       <button
@@ -116,11 +152,11 @@ export default function LandingPB() {
         aria-label="Abrir merch"
       />
 
-      {/* Versión móvil: lettering arriba + señal móvil centrada (solo visible en mobile via CSS) */}
+      {/* Versión móvil */}
       <div className="slot mobile-title" aria-hidden="true">
         <img
           src="/landing/SENAL_PORTATE_BIEN.png"
-          alt="P��rtate Bien"
+          alt="Pórtate Bien"
         />
       </div>
       <button
@@ -135,28 +171,63 @@ export default function LandingPB() {
         />
       </button>
 
-      {/* Hitboxes SOLO m��vil (coloreados para que los ajustes a mano) */}
+      {/* Hitboxes SOLO móvil */}
       <div
         className="shows-hitbox-mobile"
         onClick={() => setView("gira")}
-        aria-label="Abrir gira (m��vil)"
+        aria-label="Abrir gira (móvil)"
       />
       <div
         className="merch-hitbox-mobile"
         onClick={openMerchFromMobile}
-        aria-label="Abrir merch (m��vil)"
+        aria-label="Abrir merch (móvil)"
       />
 
       <style jsx>{`
+        /* Escena fija sin scroll: el main ocupa la pantalla y recorta lo que sobresalga */
         main {
           position: relative;
           min-height: 100svh;
-          overflow: hidden;
-          /* defaults si no pasas inline */
+          max-height: 100svh;
+          overflow: hidden; /* 🔒 nada de scroll, frame fijo */
+
           --scale: 1;
           --shows: 1;
           --center: 1.2;
           --merch: 1;
+        }
+
+        /* ===== FLOOR FIJO ABAJO, ESCALADO POR WIDTH ===== */
+        .floor {
+          position: absolute;
+          left: 50%;
+          bottom: 0;
+          transform: translateX(-50%); /* centrado horizontal */
+          pointer-events: none;
+          z-index: 2;
+        }
+
+        .floor-image {
+          display: block;
+          position: relative;
+          width: 100vw; /* ⬅️ TAMAÑO DEL SUELO: súbelo/bájalo aquí */
+          max-width: none;
+          height: auto;
+          user-select: none;
+        }
+        /* ===== FIN FLOOR ===== */
+
+        /* 🔥 FUEGO SOBRE EL CARTEL CENTRAL */ 
+        .fuego-video {
+          position: absolute;
+          left: 47%;
+          bottom: -9vh; /* ajusta hasta que coincida con tu mock */
+          transform: translateX(-50%) rotate(-7deg);
+          width: 200vh;
+          max-width: none;
+          height: auto;
+          pointer-events: none;
+          z-index: 4; /* por encima del cartel central */
         }
 
         .slot {
@@ -166,20 +237,17 @@ export default function LandingPB() {
           background: transparent;
           border: 0;
           padding: 0;
-          cursor: default; /* flecha normal por defecto */
+          cursor: default;
           transition: transform 180ms ease-out, filter 180ms ease-out;
-          /* leve movimiento para que la casita "respire" */
           translate: 0 0;
           animation: pb-slot-breathe 5200ms ease-in-out infinite;
         }
 
-        /* Slots específicos de móvil: ocultos por defecto (solo se activan en media query) */
         .mobile-title,
         .mobile-main {
           display: none;
         }
 
-        /* Hitboxes m��viles ocultos por defecto (solo se activan en media query) */
         .shows-hitbox-mobile,
         .merch-hitbox-mobile {
           position: absolute;
@@ -196,7 +264,6 @@ export default function LandingPB() {
           user-select: none;
         }
 
-        /* SHOWS: solo decorativo (click en shows-hitbox) */
         .slot.shows {
           pointer-events: none;
         }
@@ -204,7 +271,6 @@ export default function LandingPB() {
           pointer-events: none;
         }
 
-        /* MERCH: solo decorativo (click en merch-hitbox) */
         .slot.merch {
           pointer-events: none;
         }
@@ -212,14 +278,12 @@ export default function LandingPB() {
           pointer-events: none;
         }
 
-        /* Pausar la respiracion durante transiciones grandes */
         main.merch-transition .slot,
         main.merch-return .slot {
           animation: none;
           translate: 0 0;
         }
 
-        /* width = clamp(...) * var(--scale) * factor_individual */
         .shows {
           left: 3vw;
           bottom: 7vh;
@@ -253,7 +317,6 @@ export default function LandingPB() {
           );
         }
 
-        /* 🔹 Estados de hover “reactivos” */
         main.hover-shows .slot.shows {
           transform: rotate(-2deg) translateY(-0.8vh) scale(1.05);
           filter: brightness(1.08);
@@ -265,8 +328,6 @@ export default function LandingPB() {
           filter: brightness(1.08);
         }
 
-        /* Animacion de "respirar" suave usando translate
-           (no interfiere con los transform existentes) */
         @keyframes pb-slot-breathe {
           0% {
             translate: 0 0;
@@ -279,7 +340,6 @@ export default function LandingPB() {
           }
         }
 
-        /* Transición hacia MERCH: las señales se hunden hacia abajo */
         main.merch-transition .slot {
           cursor: default;
           transition: transform 900ms cubic-bezier(0.3, 0, 0.15, 1),
@@ -307,13 +367,17 @@ export default function LandingPB() {
             translateY(120vh) scale(0.9);
         }
 
-        /* Desactivar los clics mientras las traga la tierra */
+        /* Incluimos el suelo en la animación de caída */
+        main.merch-transition .floor {
+          transition: transform 900ms cubic-bezier(0.3, 0, 0.15, 1);
+          transform: translateX(-50%) translateY(120vh);
+        }
+
         main.merch-transition .shows-hitbox,
         main.merch-transition .merch-hitbox {
           pointer-events: none;
         }
 
-        /* Vuelta desde MERCH: las señales salen desde abajo hacia su sitio */
         main.merch-return .slot {
           cursor: default;
           animation-duration: 900ms;
@@ -328,6 +392,12 @@ export default function LandingPB() {
         }
         main.merch-return .slot.merch {
           animation-name: merch-return-merch;
+        }
+
+        /* Suelo vuelve a su sitio cuando regresamos de merch */
+        main.merch-return .floor {
+          animation: merch-return-floor 900ms cubic-bezier(0.3, 0, 0.15, 1)
+            forwards;
         }
 
         @keyframes merch-return-shows {
@@ -365,25 +435,56 @@ export default function LandingPB() {
           }
         }
 
-        /* 🔷 ROMBO SHOWS (ajústalo a mano igual que hiciste con MERCH) */
+          @keyframes merch-return-floor {
+            from {
+              transform: translateX(-50%) translateY(120vh);
+            }
+            to {
+              transform: translateX(-50%) translateY(0);
+            }
+          }
+
+          /* Fuego acompaña a las señales en la animación */
+          main.merch-transition .fuego-video {
+            transition: transform 900ms cubic-bezier(0.3, 0, 0.15, 1),
+              opacity 550ms ease-in;
+            transition-delay: 180ms; /* cae un poco más tarde que las señales */
+            transform: translateX(-50%) rotate(-7deg) translateY(120vh);
+            opacity: 0;
+          }
+
+          main.merch-return .fuego-video {
+            animation: merch-return-fire 900ms cubic-bezier(0.3, 0, 0.15, 1)
+              forwards;
+            animation-delay: 120ms; /* y vuelve ligeramente después */
+          }
+
+          @keyframes merch-return-fire {
+            from {
+              transform: translateX(-50%) rotate(-7deg) translateY(120vh);
+              opacity: 0;
+            }
+            to {
+              transform: translateX(-50%) rotate(-7deg) translateY(0);
+              opacity: 1;
+            }
+          }
+
         .shows-hitbox {
           position: absolute;
           z-index: 4;
-          width: 25vw; /* TOCA ESTO para encajar al cartel SHOWS */
-          height: 25vw; /* TOCA ESTO también */
-          left: 1vw; /* posición aproximada, ajústala en DevTools */
+          width: 25vw;
+          height: 25vw;
+          left: 1vw;
           bottom: 25vw;
-
-          background: transparent; /* pon verde si quieres verlo */
-          cursor: pointer; /* mano solo aquí */
+          background: transparent;
+          cursor: pointer;
           pointer-events: auto;
-
           clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
           transform: rotate(-2deg);
           transform-origin: center;
         }
 
-        /* 🔷 ROMBO MERCH (ya con tus valores) */
         .merch-hitbox {
           position: absolute;
           z-index: 4;
@@ -391,11 +492,9 @@ export default function LandingPB() {
           height: 29vw;
           right: 4vw;
           bottom: 2vw;
-
-          background: transparent; /* pon verde si quieres verlo */
-          cursor: pointer; /* mano solo aquí */
+          background: transparent;
+          cursor: pointer;
           pointer-events: auto;
-
           clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
           transform: rotate(1deg);
           transform-origin: center;
@@ -415,9 +514,7 @@ export default function LandingPB() {
           }
         }
 
-        /* ===== Versión móvil (NO tocar escritorio) ===== */
         @media (max-width: 768px) {
-          /* Oculta señales y hitboxes de escritorio */
           .slot.shows,
           .slot.center,
           .slot.merch,
@@ -426,7 +523,6 @@ export default function LandingPB() {
             display: none;
           }
 
-          /* Activa layout móvil */
           .mobile-title,
           .mobile-main {
             display: block;
@@ -458,7 +554,6 @@ export default function LandingPB() {
             height: auto;
           }
 
-          /* HITBOX SHOWS - SOLO M��VIL (verde transl��cido para que lo veas) */
           .shows-hitbox-mobile {
             display: block;
             left: 52%;
@@ -469,7 +564,6 @@ export default function LandingPB() {
             background: transparent;
           }
 
-          /* HITBOX MERCH - SOLO M��VIL (rojo transl��cido) */
           .merch-hitbox-mobile {
             display: block;
             left: 52%;
@@ -481,7 +575,6 @@ export default function LandingPB() {
           }
         }
 
-        /* Extra: desactivar clic en hitboxes de SHOWS y MERCH en móvil/tablet */
         @media (max-width: 1024px) {
           .shows-hitbox,
           .merch-hitbox {
@@ -489,8 +582,6 @@ export default function LandingPB() {
           }
         }
 
-        /* Override extra: en móvil ocultamos el título suelto de "Pórtate bien"
-           para que solo quede la señal vertical móvil centrada */
         @media (max-width: 768px) {
           .mobile-title {
             display: none;
