@@ -216,6 +216,17 @@ export default function LandingPB() {
           user-select: none;
         }
         /* ===== FIN FLOOR ===== */
+        /* 🎯 AJUSTES DEL SUELO SOLO EN MÓVIL */
+@media (max-width: 768px) {
+  .floor {
+    bottom: 0vh;   /* sube/baja el suelo en móvil */
+  }
+
+  .floor-image {
+    width: 280vw;   /* haz el suelo más ancho SOLO en móvil */
+  }
+}
+
 
         /* 🔥 FUEGO SOBRE EL CARTEL CENTRAL */ 
         .fuego-video {
@@ -229,6 +240,14 @@ export default function LandingPB() {
           pointer-events: none;
           z-index: 4; /* por encima del cartel central */
         }
+
+        /* 🔥 Ocultar fuego en pantallas móviles */
+        @media (max-width: 768px) {
+          .fuego-video {
+            display: none !important;
+          }
+        }
+          
 
         .slot {
           position: absolute;
