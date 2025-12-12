@@ -60,6 +60,11 @@ body {
   }
 }
 
+.pb-colors-row {
+  display: flex;
+  gap: 5px;
+}
+
 
 
 
