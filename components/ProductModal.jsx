@@ -38,6 +38,8 @@ export default function ProductModal() {
     const basename = (p)=> (p||'').split('/').pop();
     const applyAlias = (name)=> name;
     const fixAssetUrl = (u)=>{ if(!u) return u; const b = basename(u); return u.replace(/[^/]*$/, b); };
+    const lockBodyScroll = () => { bodyEl.classList.add('pb-modal-open', 'pb-product-modal-open'); };
+    const unlockBodyScroll = () => { bodyEl.classList.remove('pb-product-modal-open'); bodyEl.classList.remove('pb-modal-open'); };
 
     let activeModelId = null;
     let activeVariantIndex = 0;
@@ -185,7 +187,7 @@ export default function ProductModal() {
       const variant = model.variants[activeVariantIndex];
       buildColorPills(model);
       if (typeof window.updateVariantContent === 'function') window.updateVariantContent(model, variant);
-      modalEl.classList.add('is-open'); modalEl.setAttribute('aria-hidden','false'); bodyEl.classList.add('pb-modal-open'); modalEl.scrollTop = 0;
+      modalEl.classList.add('is-open'); modalEl.setAttribute('aria-hidden','false'); lockBodyScroll(); modalEl.scrollTop = 0;
     }
     function openProductModalFromCollage(variantKey, imgURL){
       const match = findModelByVariantKey(variantKey);
@@ -194,9 +196,9 @@ export default function ProductModal() {
       const fallbackModel = { title: applyAlias(basename(variantKey)).replace(/\.(png|webp|jpg|jpeg)$/i,'').replace(/[_-]+/g,' ').trim(), variants:[{ colorLabel:'', key: applyAlias(basename(variantKey)), price:'', desc:'', images:[imgURL], soldOut:true }] };
       buildColorPills(fallbackModel);
       if (typeof window.updateVariantContent === 'function') window.updateVariantContent(fallbackModel, fallbackModel.variants[0]);
-      modalEl.classList.add('is-open'); modalEl.setAttribute('aria-hidden','false'); bodyEl.classList.add('pb-modal-open'); modalEl.scrollTop = 0;
+      modalEl.classList.add('is-open'); modalEl.setAttribute('aria-hidden','false'); lockBodyScroll(); modalEl.scrollTop = 0;
     }
-    function closeProductModal(){ modalEl.classList.remove('is-open'); modalEl.setAttribute('aria-hidden','true'); bodyEl.classList.remove('pb-modal-open'); }
+    function closeProductModal(){ modalEl.classList.remove('is-open'); modalEl.setAttribute('aria-hidden','true'); unlockBodyScroll(); }
 
     const interactiveSelectors = [
       '.pb-prod-carousel-frame',
@@ -269,6 +271,7 @@ export default function ProductModal() {
         frameEl.removeEventListener('mouseup', onPointerUp);
         frameEl.removeEventListener('mouseleave', onPointerUp);
       }
+      bodyEl.classList.remove('pb-product-modal-open');
     };
   }, []);
 
@@ -286,7 +289,7 @@ export default function ProductModal() {
           <a
             className="pb-modal-brand"
             href="#"
-            onClick={(e)=>{ e.preventDefault(); e.stopPropagation(); if (typeof window.showCatalog==='function') window.showCatalog(); const m=document.getElementById('pbProductModal'); if(m){ m.classList.remove('is-open'); m.setAttribute('aria-hidden','true'); } document.body.classList.remove('pb-modal-open'); }}
+            onClick={(e)=>{ e.preventDefault(); e.stopPropagation(); if (typeof window.showCatalog==='function') window.showCatalog(); const m=document.getElementById('pbProductModal'); if(m){ m.classList.remove('is-open'); m.setAttribute('aria-hidden','true'); } document.body.classList.remove('pb-modal-open'); document.body.classList.remove('pb-product-modal-open'); }}
             aria-label="Volver al catálogo"
           >
             <img src="/lettering/logo-C-sEIKdg.webp" alt="Logo PB" />
@@ -359,5 +362,4 @@ export default function ProductModal() {
     </div>
   );
 }
-
 

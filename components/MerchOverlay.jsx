@@ -43,6 +43,7 @@ export default function MerchOverlay() {
     }, 0);
     return () => {
       document.removeEventListener("keydown", onKey);
+      body.classList.remove("pb-product-modal-open");
       body.classList.remove("pb-modal-open");
       body.style.overflow = prevOverflow || "";
       const prev = prevFocusRef.current;
@@ -72,11 +73,13 @@ export default function MerchOverlay() {
           inset: 0;
           z-index: 80;
           background: transparent;
-          overflow: auto;
           opacity: 0;
           transform: translateY(-40px);
           animation: pb-merch-enter 520ms cubic-bezier(0.2, 0.8, 0.2, 1)
             forwards;
+        }
+        :global(body.pb-product-modal-open) .pb-merch-overlay {
+          overflow: hidden;
         }
         .pb-merch-overlay.is-closing {
           animation: pb-merch-exit 400ms ease-out forwards;
@@ -135,6 +138,5 @@ export default function MerchOverlay() {
     </div>
   );
 }
-
 
 

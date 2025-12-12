@@ -169,7 +169,7 @@ main{ position:relative; z-index:1; width:100%; }
    PRODUCT MODAL (página completa + blur de fondo)
    ========================================================= */
 #pbProductModal{
-  position: fixed; inset: 0; z-index: 95; display: none; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  position: fixed; inset: 0; z-index: 95; display: none; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
   pointer-events: auto; box-sizing: border-box; color:#fff;
 }
 #pbProductModal.is-open{ display:block; }
