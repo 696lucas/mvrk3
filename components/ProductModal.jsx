@@ -30,8 +30,6 @@ export default function ProductModal() {
     const atcBtnEl = document.getElementById('pbATCBtn');
     const relatedRowEl = document.getElementById('pbRelatedRow');
 
-    const prevArrow = document.getElementById('pbCarouselPrev');
-    const nextArrow = document.getElementById('pbCarouselNext');
     const frameEl  = cardEl?.querySelector('.pb-prod-carousel-frame');
 
     const clamp = (x, min, max) => Math.min(max, Math.max(min, x));
@@ -55,10 +53,7 @@ export default function ProductModal() {
     }
     function goPrevImg(){ if (!currentImages.length) return; currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length; renderCarouselImage(); }
     function goNextImg(){ if (!currentImages.length) return; currentImageIndex = (currentImageIndex + 1) % currentImages.length; renderCarouselImage(); }
-    prevArrow && prevArrow.addEventListener('click', goPrevImg);
-    nextArrow && nextArrow.addEventListener('click', goNextImg);
-
-    // Mobile swipe support (keeps arrows too)
+    // Mobile/desktop swipe support (no arrows)
     let startX = 0, startY = 0, isPointerDown = false, didSwipe = false;
     const SWIPE_THRESH = 40; // px
     const onPointerDown = (e) => {
@@ -202,7 +197,6 @@ export default function ProductModal() {
 
     const interactiveSelectors = [
       '.pb-prod-carousel-frame',
-      '.pb-carousel-arrow',
       '.pb-prod-carousel-image',
       '.pb-colors-row',
       '.pb-color-pill',
@@ -260,8 +254,6 @@ export default function ProductModal() {
       overlayEl && overlayEl.removeEventListener('click', onOverlayClick);
       document.removeEventListener('keydown', onEsc);
       qtyBoxEl && qtyBoxEl.removeEventListener('click', onQty);
-      prevArrow && prevArrow.removeEventListener('click', goPrevImg);
-      nextArrow && nextArrow.removeEventListener('click', goNextImg);
       if (frameEl){
         frameEl.removeEventListener('touchstart', onPointerDown);
         frameEl.removeEventListener('touchmove', onPointerMove);
@@ -296,9 +288,7 @@ export default function ProductModal() {
           </a>
           <div className="pb-prod-gallery">
             <div className="pb-prod-carousel-frame">
-              <button className="pb-carousel-arrow pb-carousel-arrow--prev" id="pbCarouselPrev" aria-label="Anterior"><Image className="flechacarrusel" src="/icon/flechaizquierda.png" alt="" width={24} height={24} /></button>
               <Image id="pbCarouselImage" className="pb-prod-carousel-image" alt={carouselAlt} src={carouselUrl || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='} width={500} height={500} unoptimized />
-              <button className="pb-carousel-arrow pb-carousel-arrow--next" id="pbCarouselNext" aria-label="Siguiente"><Image className="flechacarrusel" src="/icon/flechaderecha.png" alt="" width={24} height={24} /></button>
             </div>
           </div>
 
@@ -362,4 +352,3 @@ export default function ProductModal() {
     </div>
   );
 }
-
