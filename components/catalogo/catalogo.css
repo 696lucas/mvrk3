@@ -428,17 +428,6 @@ main{ position:relative; z-index:1; width:100%; }
 .pb-btn--pay{ background:#000; color:#fff; }
 .pb-btn--shop{ background:#5b3df5; color:#fff; }
 
-/* ====== Mini-popup “Añadido al carrito” (opcional, compacta) ====== */
-.pb-minicart{
-  position:fixed; z-index:calc(var(--pb-cart-z) + 1); min-width:260px; max-width:320px; padding:12px;
-  background:#0a0a0a; color:#fff; border:1px solid rgba(255,255,255,.12); border-radius:12px;
-  box-shadow:0 20px 50px rgba(0,0,0,.55); opacity:0; transform:translateY(-8px);
-  transition:opacity .16s ease, transform .16s ease;
-}
-.pb-minicart.is-open{ opacity:1; transform:translateY(0); }
-.pb-minicart__title{ font-weight:800; font-size:14px; margin:0 0 6px; }
-.pb-minicart__row{ display:flex; justify-content:space-between; margin:6px 0 10px; font-size:13px; opacity:.9; }
-
 /* iPod móvil (merch): activar interacciones y posición del botón */
 @media (max-width:768px){
   .music-drawer{
@@ -451,7 +440,6 @@ main{ position:relative; z-index:1; width:100%; }
     top:26%;
   }
 }
-.pb-minicart__actions{ display:flex; gap:8px; }
 /* ===== Tallas en el modal ===== */
 .pb-prod-sizes-block{
   display:grid;

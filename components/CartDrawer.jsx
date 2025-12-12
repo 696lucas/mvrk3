@@ -107,13 +107,6 @@ export default function CartDrawer() {
     .pb-btn--pay{ background:#111; color:#fff; width:100%; margin-top:8px; }
     .pb-btn--shop{ background:#efefef; color:#111; width:100%; margin-top:8px; }
     .pb-cart-badge{ position:absolute; right:-6px; top:-6px; background:#fff; color:#111; border-radius:999px; min-width:18px; height:18px; display:none; align-items:center; justify-content:center; font:700 11px/1 system-ui }
-    .pb-minicart{ position:absolute; z-index:10000; min-width:300px; background:#111; color:#fff; border-radius:10px; padding:12px; box-shadow:0 10px 28px rgba(0,0,0,.4); opacity:0; transform:translateY(-6px); transition:opacity .18s ease, transform .18s ease; }
-    .pb-minicart.is-open{ opacity:1; transform:translateY(0); }
-    .pb-minicart__title{ font:700 14px/1.2 system-ui; margin-bottom:6px; }
-    .pb-minicart__row{ display:flex; align-items:center; justify-content:space-between; font:500 13px/1.2 system-ui; padding:4px 0; }
-    .pb-minicart__actions{ display:flex; gap:8px; margin-top:10px; }
-    .pb-minicart .pb-btn{ flex:1; }
-    .pb-minicart .pb-btn--primary{ background:#fff; color:#111; }
 
     .pb-cart__close{
       background:transparent;
@@ -195,64 +188,6 @@ export default function CartDrawer() {
     });
     await fetchCart();
     setOpen(true);
-    // mini-cart toast
-    const s = getCartState();
-    let popup = document.querySelector(".pb-minicart");
-    if (popup) popup.remove();
-    popup = document.createElement("div");
-    popup.className = "pb-minicart";
-    popup.innerHTML = `
-      <div class="pb-minicart__title">Añadido al carrito</div>
-      <div class="pb-minicart__row"><span>Artículos</span><strong>${s.qty || 0}</strong></div>
-      <div class="pb-minicart__row"><span>Subtotal</span><strong>${formatPrice(
-        s.subtotal || 0,
-        s.currency || "EUR"
-      )}</strong></div>
-      <div class="pb-minicart__actions">
-        <button type="button" class="pb-btn" data-action="continue">Seguir comprando</button>
-        <button type="button" class="pb-btn pb-btn--primary" data-action="checkout">Ir a pagar</button>
-      </div>
-    `;
-    document.body.appendChild(popup);
-    const icon =
-      document.querySelector(".pb-cart-trigger") ||
-      document.querySelector('a[href="/cart"]');
-    const r = icon
-      ? icon.getBoundingClientRect()
-      : { top: 0, left: 0, width: 0, height: 0 };
-    const top = Math.max(12, window.scrollY + r.top + r.height + 10);
-    const left = Math.min(
-      window.scrollX + r.left + r.width - 320,
-      window.scrollX + r.left
-    );
-    Object.assign(popup.style, { top: top + "px", left: left + "px" });
-    requestAnimationFrame(() => popup.classList.add("is-open"));
-    let to;
-    popup.onclick = (e) => {
-      const target = e.target;
-      const a =
-        target && target.closest
-          ? target.closest("[data-action]")
-          : null;
-      if (!a) return;
-      const action = a.getAttribute("data-action");
-      if (action === "checkout") {
-        if (cart && cart.checkoutUrl) window.location.href = cart.checkoutUrl;
-      }
-      if (action === "continue") {
-        closeMini();
-      }
-    };
-    function closeMini() {
-      if (popup) {
-        popup.classList.remove("is-open");
-        setTimeout(() => {
-          if (popup && popup.parentNode) popup.parentNode.removeChild(popup);
-        }, 150);
-      }
-    }
-    clearTimeout(to);
-    to = setTimeout(closeMini, 3000);
   }
 
   async function cartUpdate(lineId, quantity) {
@@ -472,5 +407,3 @@ export default function CartDrawer() {
     </div>
   );
 }
-
-
