@@ -1,11 +1,10 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
 
-@theme inline {
+  /* Variables que antes estaban en @theme (mismo efecto) */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -24,17 +23,18 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
 /* Capa global fija a pantalla completa (para que absolute no “salte”) */
-#ipod-layer{
+#ipod-layer {
   position: fixed;
   inset: 0;
   z-index: 1000;         /* por encima de cualquier vista */
-  pointer-events: none;  /* no bloquea clics del sitio */
+  pointer-events: none; /* no bloquea clics del sitio */
 }
 
 /* El iPod en absolute dentro de la capa fija */
-#ipod-layer .ipod{
-  position: absolute;    /* <- como pedías: absolute */
+#ipod-layer .ipod {
+  position: absolute;    /* absolute como pedías */
   left: 16px;
   bottom: 16px;
   width: clamp(240px, 28vw, 360px);
@@ -42,31 +42,143 @@ body {
 }
 
 /* Evita mezclas raras con el vídeo/fondos */
-#ipod-layer, #ipod-layer *{
+#ipod-layer,
+#ipod-layer * {
   mix-blend-mode: normal !important;
 }
 
-@media (max-width: 640px){
-  #ipod-layer .ipod{ width: clamp(220px, 60vw, 320px); }
-}
-
-/* Ajuste de encuadre del fondo solo en móvil */
-@media (max-width: 640px){
-  #bg-video{
-    object-position: 3% 80%;
-    /* Zoom ligero para que se vea más grande y tape el negro superior */
-    transform: scale(1.12) translateY(2vh);
-    transform-origin: center;
+@media (max-width: 640px) {
+  #ipod-layer .ipod {
+    width: clamp(220px, 60vw, 320px);
   }
 }
 
-.pb-colors-row {
-  display: flex;
-  gap: 5px;
+/* ===========================
+   NEWSLETTER MODAL - GLOBAL CSS
+   =========================== */
+
+.pb-newsletter-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 999990;
+  display: none;
+  overscroll-behavior: contain;
+  touch-action: none;
 }
 
+.pb-newsletter-overlay.is-open {
+  display: block;
+}
 
+.pb-newsletter-modal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 380px);
+  background: #111;
+  color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  padding: 16px;
+}
 
+.pb-newsletter-title {
+  font: 800 18px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+  margin: 0 0 8px;
+}
 
+.pb-newsletter-sub {
+  opacity: .85;
+  font: 500 13px/1.3 system-ui;
+  margin: 0 0 12px;
+}
 
+.pb-newsletter-row {
+  display: flex;
+  gap: 8px;
+}
 
+.pb-newsletter-input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.2);
+  background: #222;
+  color: #fff;
+  font: 500 14px/1.2 system-ui;
+}
+
+.pb-newsletter-btn {
+  appearance: none;
+  border: 0;
+  border-radius: 8px;
+  background: #eae400;
+  color: #111;
+  font-weight: 800;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.pb-newsletter-btn[disabled] {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.pb-newsletter-close {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  font: 700 18px/1 system-ui;
+  cursor: pointer;
+}
+
+.pb-newsletter-msg {
+  margin-top: 10px;
+  font: 600 13px/1.2 system-ui;
+}
+
+.pb-newsletter-msg.error {
+  color: #ff6b6b;
+}
+
+.pb-newsletter-msg.ok {
+  color: #b4ff7a;
+}
+
+/* =================================================
+   FIX MOBILE — bloquear arrastre de la escena landing
+   (NO afecta a desktop)
+   ================================================= */
+@media (hover: none) and (pointer: coarse) {
+  .slot,
+  .slot img,
+  .mobile-main,
+  .mobile-main img,
+  .mobile-title,
+  .mobile-title img,
+  .floor,
+  .floor-image {
+    touch-action: none;
+    -webkit-user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+}
+
+/* =================================================
+   FIX MOBILE — evitar fondo negro arriba (cielo)
+   NO afecta a desktop
+   ================================================= */
+@media (hover: none) and (pointer: coarse) {
+  html,
+  body {
+    background-color: #4f7cff;
+    overscroll-behavior-y: none;
+  }
+}
