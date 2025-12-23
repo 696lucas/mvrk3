@@ -3,21 +3,106 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
-const VIDEOS = [
-  { src: "/videos/nostoi.mp4", title: "Nostoi" },
-  { src: "/videos/360.mp4", title: "360" },
-  { src: "/videos/blowme.mp4", title: "Blow Me" },
-  { src: "/videos/callaito.mp4", title: "Callaito" },
-  { src: "/videos/jim.mp4", title: "Jim" },
-  { src: "/videos/keef.mp4", title: "Keef" },
-  { src: "/videos/marlo.mp4", title: "Marlo" },
-  { src: "/videos/moneyspread.mp4", title: "Money Spread" },
-  { src: "/videos/perrabb.mp4", title: "Perrabb" },
-  { src: "/videos/sonrie.mp4", title: "Sonríe" },
-  { src: "/videos/teniafe.mp4", title: "Tenía Fe" },
-  { src: "/videos/toymb.mp4", title: "Toy MB" },
-  { src: "/videos/yeat.mp4", title: "Yeat" }
+/**
+ * IMPORTANTE
+ * - Ya NO se busca nada en /videos/...
+ * - Portadas:  /public/portadas
+ * - Canciones: /public/canciones
+ *
+ * Recomendación futura (si quieres “emparejar por nombre base” sin lista manual):
+ *  - Renombra audios para que se llamen EXACTAMENTE igual que la portada (sin artista delante),
+ *    ej: "Tempo 2.mp3" y "Tempo 2.png"
+ *  - Con eso, bastaría con name="Tempo 2" y listo.
+ */
+
+const BASE_TRACKS = [
+  // name = nombre base lógico del track (y el que se verá si no pones title)
+  // coverFile/audioFile = nombres reales de archivo en /public/portadas y /public/canciones
+
+  { name: 'Tempo 2', title: 'Tempo 2', coverFile: 'Tempo 2.png', audioFile: 'Carolina Durante - Tempo 2.mp3' },
+  { name: 'Black Jeep', title: 'Black Jeep', coverFile: 'Black Jeep.png', audioFile: 'fakemink - Black Jeep.mp3' },
+  { name: 'Estrella Michelin', title: 'Estrella Michelin', coverFile: 'Estrella Michelin.png', audioFile: 'Guxo - Estrella Michelin.mp3' },
+  { name: 'Suano', title: 'Suano', coverFile: 'suano.png', audioFile: 'Ntg - Suano.mp3' },
+  { name: 'SONRIE', title: 'SONRIE', coverFile: 'SONRIE.png', audioFile: 'Raly - SONRIE.mp3' },
+  { name: 'Brandy Boo', title: 'Brandy Boo', coverFile: 'Brandy Boo.png', audioFile: 'Yung Brandy - Brandy Boo.mp3' },
+
+  // Si este archivo cambia de nombre exacto, ajusta aquí:
+  // La portada es "MIA.png" pero el audio suele venir como "M.I.A (...).mp3"
+  // Pon aquí el nombre EXACTO del mp3 que tengas en /public/canciones
+  { name: 'MIA', title: 'MIA', coverFile: 'MIA.png', audioFile: 'R8venge - M.I.A (feat. Yvngrobv).mp3' },
+
+  { name: 'MAYBACH', title: 'MAYBACH', coverFile: 'MAYBACH.png', audioFile: 'Ugly - MAYBACH.mp3' },
+  { name: 'ROCKMAN', title: 'ROCKMAN', coverFile: 'ROCKMAN.png', audioFile: 'Mk.gee - ROCKMAN.mp3' },
+
+  // Kitate (tu portada se llama "Kitate.png"; el mp3 tiene nombre largo)
+  { name: 'Kitate', title: 'Kitate', coverFile: 'Kitate.png', audioFile: 'benjitalkapone - Kitate.mp3' },
+
+  { name: 'Demure', title: 'Demure', coverFile: 'Demure.png', audioFile: 'superreservao - Demure.mp3' },
+  { name: 'CEO', title: 'CEO', coverFile: 'ceo.png', audioFile: 'Guxo - CEO.mp3' },
+
+  { name: 'TE WA METER UN BEBÉ', title: 'TE WA METER UN BEBÉ', coverFile: 'TE WA METER UN BEBÉ.png', audioFile: 'VEI HABACHE - TE WA METER UN BEBÉ.mp3' },
+
+
+
+  // #bestie (portada: "beestie.png" / audio: "Ugly - #bestie.mp3")
+  { name: '#bestie', title: '#bestie', coverFile: 'beestie.png', audioFile: 'Ugly - #bestie.mp3' },
+
+  { name: 'ran kan kan', title: 'ran kan kan', coverFile: 'ran kan kan.png', audioFile: 'Xiyo - ran kan kan.mp3' },
+  { name: 'PIRRI', title: 'PIRRI', coverFile: 'PIRRI.png', audioFile: 'Ralphie Choo - PIRRI.mp3' },
+
+  // Intergaláctica: portada "INTERGALACTICA A.png", audio "ANB - Intergaláctica.mp3"
+  { name: 'Intergaláctica', title: 'Intergaláctica', coverFile: 'INTERGALACTICA.png', audioFile: 'ANB - Intergaláctica.mp3' },
+
+  // P&M&M: portada "P&M&M.png", audio "Biberon - P M M (...).mp3"
+  { name: 'P&M&M', title: 'P&M&M', coverFile: 'P&M&M.png', audioFile: 'Biberon - P M M (feat. alberrt).mp3' },
+
+  // DIGITAL15: portada "digital 15.png", audio "Yk l t 5 Junaa - DIGITAL15.mp3"
+  { name: 'DIGITAL15', title: 'DIGITAL15', coverFile: 'digital 15.png', audioFile: 'Yk l t 5 Junaa - DIGITAL15.mp3' },
+
+  // ENGANCHAO: portada "enganchao.png", audio "Biberon - ENGANCHAO.mp3"
+  { name: 'ENGANCHAO', title: 'ENGANCHAO', coverFile: 'enganchao.png', audioFile: 'Biberon - ENGANCHAO.mp3' },
+
+  // NoSTOi: portada "NoSTOi.png", audio "MVRK - NoSTOi.mp3"
+  { name: 'NoSTOi', title: 'NoSTOi', coverFile: 'NoSTOi.png', audioFile: 'MVRK - NoSTOi.mp3' },
+
+  // YOTMB: portada "YOTMB.png", audio "MVRK - YOTMB.mp3"
+  { name: 'YOTMB', title: 'YOTMB', coverFile: 'YOTMB.png', audioFile: 'MVRK - YOTMB.mp3' },
 ];
+
+// NUEVAS BASES (SIN /videos)
+const COVER_BASES = ['/videos/portadas'];
+const AUDIO_BASES = ['/videos/canciones'];
+
+const toUrl = (base, file) => encodeURI(`${base}/${file}`);
+
+const TRACKS = BASE_TRACKS.map((t) => {
+  // Si algún día renombráis y queréis “por nombre base”:
+  // - Si no hay coverFile/audioFile, se intenta con `${name}.png/jpg` y `${name}.mp3`
+  const coverCandidates = [];
+  const audioCandidates = [];
+
+  // COVERS
+  if (t.coverFile) {
+    COVER_BASES.forEach((base) => coverCandidates.push(toUrl(base, t.coverFile)));
+  } else {
+    // fallback por nombre base (por si renombráis en el futuro)
+    ['png', 'jpg', 'jpeg', 'webp'].forEach((ext) => {
+      COVER_BASES.forEach((base) => coverCandidates.push(toUrl(base, `${t.name}.${ext}`)));
+    });
+  }
+
+  // AUDIOS
+  if (t.audioFile) {
+    AUDIO_BASES.forEach((base) => audioCandidates.push(toUrl(base, t.audioFile)));
+  } else {
+    // fallback por nombre base (por si renombráis en el futuro)
+    ['mp3', 'wav', 'm4a', 'ogg'].forEach((ext) => {
+      AUDIO_BASES.forEach((base) => audioCandidates.push(toUrl(base, `${t.name}.${ext}`)));
+    });
+  }
+
+  return { ...t, coverCandidates, audioCandidates };
+});
 
 export default function MusicDrawer() {
   const [isMobile, setIsMobile] = useState(false);
@@ -33,10 +118,16 @@ export default function MusicDrawer() {
   }, []);
 
   useEffect(() => {
-    try { window.PB_MUSIC_OWNER = 'react'; } catch (_) {}
+    try {
+      window.PB_MUSIC_OWNER = 'react';
+    } catch (_) {}
 
-    const video = document.getElementById('ipodVideo');
-    if (!video) return;
+    const audio = document.getElementById('ipodAudio');
+    const cover = document.getElementById('ipodCover');
+    if (!audio || !cover) return;
+
+    const progress = document.getElementById('ipodProgress');
+    const progressFill = document.getElementById('ipodProgressFill');
 
     const enableWheelGestures =
       typeof window !== 'undefined' &&
@@ -55,14 +146,57 @@ export default function MusicDrawer() {
     let i = 0;
     let interacted = false;
     let keyboardEnabled = false;
+    let coverAttempt = 0;
+    let audioAttempt = 0;
     const ipodScreen = document.querySelector('.ipod-screen');
 
-    const onLoadedMeta = () => {
-      const w = video.videoWidth || 4;
-      const h = video.videoHeight || 3;
+    const setAspect = (w = 4, h = 3) => {
       if (ipodScreen) ipodScreen.style.aspectRatio = `${w} / ${h}`;
     };
-    video.addEventListener('loadedmetadata', onLoadedMeta);
+
+    let coverFailed = false;
+    const onCoverLoad = () => {
+      const w = cover.naturalWidth || 4;
+      const h = cover.naturalHeight || 3;
+      setAspect(w, h);
+    };
+
+    const onCoverError = () => {
+      const t = TRACKS[i];
+      if (t?.coverCandidates && coverAttempt + 1 < t.coverCandidates.length) {
+        coverAttempt += 1;
+        cover.src = t.coverCandidates[coverAttempt];
+        return;
+      }
+      if (coverFailed) return;
+      coverFailed = true;
+      console.warn('[ipod] No se pudo cargar la portada', t?.coverCandidates?.[coverAttempt]);
+      cover.src = '/ipod/IPod_29_2009.webp';
+      setAspect(4, 3);
+    };
+
+    cover.addEventListener('load', onCoverLoad);
+    cover.addEventListener('error', onCoverError);
+
+    function setProgress(pct) {
+      if (!progressFill) return;
+      const clamped = Math.max(0, Math.min(1, pct || 0));
+      progressFill.style.transform = `scaleX(${clamped})`;
+    }
+
+    const onTimeUpdate = () => {
+      if (!audio || !audio.duration || !isFinite(audio.duration)) return setProgress(0);
+      setProgress(audio.currentTime / audio.duration);
+    };
+
+    const onLoadedMeta = () => {
+      setProgress(0);
+    };
+
+    audio.addEventListener('timeupdate', onTimeUpdate);
+    audio.addEventListener('loadedmetadata', onLoadedMeta);
+    audio.addEventListener('durationchange', onLoadedMeta);
+    audio.addEventListener('ended', () => setProgress(1));
 
     let history = [];
     let bag = [];
@@ -76,20 +210,36 @@ export default function MusicDrawer() {
     }
 
     function refillBag(excludeIndex) {
-      const candidates = [...Array(VIDEOS.length).keys()].filter(idx => idx !== excludeIndex);
+      const candidates = [...Array(TRACKS.length).keys()].filter((idx) => idx !== excludeIndex);
       bag = shuffleLocal(candidates);
     }
 
-    function loadVideo(index, autoplay = false) {
-      i = (index + VIDEOS.length) % VIDEOS.length;
-      const v = VIDEOS[i];
-      if (ui.title) ui.title.textContent = v.title || '';
-      if (ui.artist) ui.artist.textContent = v.artist || '';
-      video.src = v.src;
-      if (v.poster) video.setAttribute('poster', v.poster);
-      else video.removeAttribute('poster');
+    function loadTrack(index, autoplay = false) {
+      i = (index + TRACKS.length) % TRACKS.length;
+      const t = TRACKS[i];
+
+      if (ui.title) ui.title.textContent = t.title || '';
+      if (ui.artist) ui.artist.textContent = t.artist || '';
+
+      coverFailed = false;
+      coverAttempt = 0;
+      audioAttempt = 0;
+
+      cover.alt = t.title || 'Cover';
+      cover.src = t.coverCandidates?.[0] || '';
+
+      try {
+        audio.pause();
+        audio.currentTime = 0;
+      } catch (_) {}
+
+      audio.src = t.audioCandidates?.[0] || '';
+      if (audio.load) audio.load();
+
+      setProgress(0);
+
       if (autoplay) {
-        video.play().catch(() => {});
+        audio.play().catch(() => {});
       }
     }
 
@@ -97,34 +247,35 @@ export default function MusicDrawer() {
       if (!bag.length) refillBag(i);
       history.push(i);
       const ni = bag.shift();
-      loadVideo(ni, true);
+      loadTrack(ni, true);
     }
 
     function prev() {
       if (history.length) {
         const ni = history.pop();
-        loadVideo(ni, true);
+        loadTrack(ni, true);
       } else {
-        loadVideo(i - 1, true);
+        loadTrack(i - 1, true);
       }
     }
 
     async function togglePlay() {
       try {
-        if (video.paused) {
-          video.muted = false;
-          await video.play();
+        if (audio.paused) {
+          audio.muted = false;
+          await audio.play();
           interacted = true;
         } else {
-          video.pause();
+          audio.pause();
         }
       } catch (_e) {}
     }
 
     function stopPlayback() {
       try {
-        video.pause();
-        video.currentTime = 0;
+        audio.pause();
+        audio.currentTime = 0;
+        setProgress(0);
       } catch (_) {}
     }
 
@@ -142,12 +293,28 @@ export default function MusicDrawer() {
     ui.play && ui.play.addEventListener('dblclick', onPlayDbl);
 
     const onEnded = () => next();
-    video.addEventListener('ended', onEnded);
+
+    const onAudioError = () => {
+      const t = TRACKS[i];
+      if (t?.audioCandidates && audioAttempt + 1 < t.audioCandidates.length) {
+        audioAttempt += 1;
+        audio.src = t.audioCandidates[audioAttempt];
+        if (audio.load) audio.load();
+        audio.play().catch(() => {});
+        return;
+      }
+      console.warn('[ipod] No se pudo reproducir el audio', t?.audioCandidates?.[audioAttempt]);
+      next();
+    };
+
+    audio.addEventListener('ended', onEnded);
+    audio.addEventListener('error', onAudioError);
 
     const onKeyDown = (e) => {
       if (!keyboardEnabled) return;
       const t = e.target;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+
       if (e.key === 'ArrowRight') {
         e.preventDefault();
         next();
@@ -156,20 +323,25 @@ export default function MusicDrawer() {
         prev();
       }
     };
+
     document.addEventListener('keydown', onKeyDown);
 
-    [ui.prev, ui.next, ui.play, ui.wheel, video].forEach(el => {
+    [ui.prev, ui.next, ui.play, ui.wheel, cover].forEach((el) => {
       if (!el) return;
-      el.addEventListener('click', async () => {
-        if (!interacted) {
-          try {
-            video.muted = false;
-            await video.play();
-            interacted = true;
-            keyboardEnabled = true;
-          } catch (_) {}
-        }
-      }, { once: true });
+      el.addEventListener(
+        'click',
+        async () => {
+          if (!interacted) {
+            try {
+              audio.muted = false;
+              await audio.play();
+              interacted = true;
+              keyboardEnabled = true;
+            } catch (_) {}
+          }
+        },
+        { once: true }
+      );
     });
 
     // clickwheel
@@ -183,7 +355,7 @@ export default function MusicDrawer() {
       const cx = r.left + r.width / 2;
       const cy = r.top + r.height / 2;
       const p = e.touches ? e.touches[0] : e;
-      return Math.atan2(p.clientY - cy, p.clientX - cx) * 180 / Math.PI;
+      return (Math.atan2(p.clientY - cy, p.clientX - cx) * 180) / Math.PI;
     }
 
     function start(e) {
@@ -226,17 +398,27 @@ export default function MusicDrawer() {
     }
 
     // initial state
-    try { loadVideo(0, false); } catch (_) {}
+    try {
+      const startIndex = TRACKS.findIndex((t) => t.name.toLowerCase() === 'nostoi');
+      loadTrack(startIndex !== -1 ? startIndex : 0, false);
+    } catch (_) {}
 
     return () => {
-      video.removeEventListener('loadedmetadata', onLoadedMeta);
+      cover.removeEventListener('load', onCoverLoad);
+      cover.removeEventListener('error', onCoverError);
+
+      audio.removeEventListener('timeupdate', onTimeUpdate);
+      audio.removeEventListener('loadedmetadata', onLoadedMeta);
+      audio.removeEventListener('durationchange', onLoadedMeta);
+
       ui.prev && ui.prev.removeEventListener('click', onPrev);
       ui.next && ui.next.removeEventListener('click', onNext);
       if (ui.play) {
         ui.play.removeEventListener('click', onPlay);
         ui.play.removeEventListener('dblclick', onPlayDbl);
       }
-      video.removeEventListener('ended', onEnded);
+      audio.removeEventListener('ended', onEnded);
+      audio.removeEventListener('error', onAudioError);
       document.removeEventListener('keydown', onKeyDown);
       if (enableWheelGestures && ui.wheel) {
         ui.wheel.removeEventListener('mousedown', onTouchStart);
@@ -251,8 +433,10 @@ export default function MusicDrawer() {
 
   const handleTriggerClick = (e) => {
     if (!isMobile) return;
-    try { e.preventDefault(); } catch (_) {}
-    setIsOpenMobile(open => !open);
+    try {
+      e.preventDefault();
+    } catch (_) {}
+    setIsOpenMobile((open) => !open);
   };
 
   const drawerClassName = `music-drawer${isMobile && isOpenMobile ? ' is-open-mobile' : ''}`;
@@ -268,13 +452,7 @@ export default function MusicDrawer() {
         type="button"
         onClick={handleTriggerClick}
       >
-        <Image
-          className="music-drawer__icon"
-          src="/ipod/IPod_29_2009.webp"
-          alt="Reproductor"
-          width={32}
-          height={32}
-        />
+        <Image className="music-drawer__icon" src="/ipod/IPod_29_2009.webp" alt="Reproductor" width={32} height={32} />
       </button>
 
       <div className="music-drawer__panel" id="musicPanel" role="region" aria-label="Reproductor iPod">
@@ -282,7 +460,13 @@ export default function MusicDrawer() {
         <div className="ipod-photo" aria-label="iPod mini">
           <div className="overlay">
             <div className="ipod-screen">
-              <video id="ipodVideo" playsInline preload="metadata" />
+              <img id="ipodCover" alt="Portada" />
+              <audio id="ipodAudio" preload="metadata" />
+
+              <div className="ipod-progress" id="ipodProgress" aria-hidden="true">
+                <div className="ipod-progress__fill" id="ipodProgressFill" />
+              </div>
+
               <div>
                 <div className="ipod-title" id="ipodTitle"></div>
                 <div className="ipod-artist" id="ipodArtist"></div>

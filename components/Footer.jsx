@@ -7,8 +7,7 @@ export default function Footer() {
         <div className="pb-footer-split__inner">
           <nav className="pb-footer-links" aria-label="Footer links">
             <a className="pb-footer-link" href="/newsletter">NEWSLETTER</a>
-            <a className="pb-footer-link" href="/shipping">SHIPPING POLICY</a>
-            <a className="pb-footer-link" href="/terms">TERMS OF SERVICE</a>
+            <a className="pb-footer-link" href="/shipping">POLITICAS</a>
           </nav>
 
           <div className="pb-footer-ig-col">
