@@ -170,15 +170,14 @@ body {
     -webkit-user-select: none;
   }
 }
-
-/* =================================================
-   FIX MOBILE — evitar fondo negro arriba (cielo)
-   NO afecta a desktop
-   ================================================= */
 @media (hover: none) and (pointer: coarse) {
   html,
   body {
-    background-color: #4f7cff;
+    background-color: #4f7cff; /* fallback */
+    background-image: url("/landing/cielo.png"); /* MISMO cielo que usas */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top center;
     overscroll-behavior-y: none;
   }
 }
