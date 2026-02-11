@@ -141,12 +141,41 @@ export default function ProductModal() {
     }
 
     // Legacy base updater
+    function escapeHtml(text){
+      return String(text)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#39;');
+    }
+
     function baseUpdateVariantContent(model, variant){
       const fullTitle = variant.colorLabel ? `${model.title} (${variant.colorLabel})` : model.title;
       if (titleEl) titleEl.textContent = fullTitle;
       if (priceEl) priceEl.textContent = variant.price || '';
       if (subEl)   subEl.textContent   = variant.colorLabel ? String(variant.colorLabel) : '';
-      if (descEl)  descEl.innerHTML  = formatDescHtml(variant.desc);
+      if (descEl){
+        const rawDesc =
+          variant?.desc ??
+          variant?.description ??
+          variant?.body_html ??
+          variant?.bodyHtml ??
+          model?.desc ??
+          model?.description ??
+          '';
+        const looksLikeHtml = /<[^>]+>/.test(String(rawDesc));
+        if (looksLikeHtml) {
+          descEl.innerHTML = rawDesc;
+        } else {
+          const bulletParts = String(rawDesc).split(/•/).map(s=>s.trim()).filter(Boolean);
+          if (bulletParts.length >= 2){
+            descEl.innerHTML = `<ul>${bulletParts.map(li=>`<li>${escapeHtml(li)}</li>`).join('')}</ul>`;
+          } else {
+            descEl.textContent = rawDesc;
+          }
+        }
+      }
       if (qtyNumEl) qtyNumEl.textContent = '1';
       if (atcBtnEl){ atcBtnEl.disabled = true; atcBtnEl.textContent = 'Agotado'; atcBtnEl.style.cursor = 'not-allowed'; atcBtnEl.style.opacity = '.6'; }
       const byColor = pickGalleryImages(model, variant);
@@ -404,7 +433,11 @@ export default function ProductModal() {
               <button className="pb-atc-btn" id="pbATCBtn" disabled>Agotado</button>
             </div>
 
-            <div className="pb-prod-desc" id="pbProdDesc" style={{ fontWeight: 600, lineHeight: 1.5 }}></div>
+            <div
+              className="pb-prod-desc"
+              id="pbProdDesc"
+              style={{ fontWeight: 600, lineHeight: 1.5, whiteSpace: 'pre-line' }}
+            ></div>
           </div>
         </section>
 
