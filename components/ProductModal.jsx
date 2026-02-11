@@ -19,8 +19,6 @@ export default function ProductModal() {
     const closeBtn = document.getElementById('pbProdCloseBtn');
     const cardEl = modalEl?.querySelector('.pb-product-modal-card');
     if (!modalEl) return;
-    // Safety: if any previous modal left scroll locked, clear it on mount (mobile only).
-    unlockBodyScroll();
 
     const titleEl = document.getElementById('pbProdTitle');
     const priceEl = document.getElementById('pbProdPrice');
