@@ -133,7 +133,7 @@ export default function ProductModal() {
       if (titleEl) titleEl.textContent = fullTitle;
       if (priceEl) priceEl.textContent = variant.price || '';
       if (subEl)   subEl.textContent   = variant.colorLabel ? String(variant.colorLabel) : '';
-      if (descEl)  descEl.textContent  = variant.desc  || '';
+      if (descEl)  descEl.innerHTML  = variant.desc  || '';
       if (qtyNumEl) qtyNumEl.textContent = '1';
       if (atcBtnEl){ atcBtnEl.disabled = true; atcBtnEl.textContent = 'Agotado'; atcBtnEl.style.cursor = 'not-allowed'; atcBtnEl.style.opacity = '.6'; }
       const byColor = pickGalleryImages(model, variant);
