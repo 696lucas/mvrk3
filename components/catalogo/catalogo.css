@@ -42,8 +42,8 @@ main{ position:relative; z-index:1; width:100%; }
 }
 @media (max-width:768px){
   /* Mobile: 3 por fila, centrado, un poco más pequeño y con ligera "desalineación" visual */
-  .collage{ display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start; gap:6px; height:auto !important; padding:6px 4px; }
-  .piece{ position:static; left:auto; top:auto; will-change:auto; z-index:auto; width: 28%; display:flex; justify-content:center; transition: transform .15s ease; }
+  .collage{ display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start; gap:8px; height:auto !important; padding:8px 4px; }
+  .piece{ position:static; left:auto; top:auto; will-change:auto; z-index:auto; width: 30%; display:flex; justify-content:center; transition: transform .15s ease; }
   /* sutil desorden por patrón */
   .piece:nth-child(6n+1){ transform: translateY(6px) rotate(-1.2deg); }
   .piece:nth-child(6n+2){ transform: translateY(-4px) rotate(1deg); }
@@ -51,7 +51,7 @@ main{ position:relative; z-index:1; width:100%; }
   .piece:nth-child(6n+4){ transform: translateY(-3px) rotate(-0.8deg); }
   .piece:nth-child(6n+5){ transform: translateY(5px) rotate(1.2deg); }
   .piece:nth-child(6n){ transform: translateY(-5px) rotate(-0.4deg); }
-  .piece img{ width: calc(78% * var(--itemScale,1)); height:auto; max-width:none; max-height:none; object-fit:contain; }
+  .piece img{ width: calc(85% * var(--itemScale,1)); height:auto; max-width:none; max-height:none; object-fit:contain; }
 }
 .sr-only{
   position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
