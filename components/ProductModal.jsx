@@ -39,8 +39,22 @@ export default function ProductModal() {
     const basename = (p)=> (p||'').split('/').pop();
     const applyAlias = (name)=> name;
     const fixAssetUrl = (u)=>{ if(!u) return u; const b = basename(u); return u.replace(/[^/]*$/, b); };
-    const lockBodyScroll = () => { bodyEl.classList.add('pb-modal-open', 'pb-product-modal-open'); };
-    const unlockBodyScroll = () => { bodyEl.classList.remove('pb-product-modal-open'); bodyEl.classList.remove('pb-modal-open'); };
+    const isMobile = () => {
+      try {
+        return window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+      } catch (_) {
+        return false;
+      }
+    };
+    const lockBodyScroll = () => {
+      if (!isMobile()) return;
+      bodyEl.classList.add('pb-modal-open', 'pb-product-modal-open');
+    };
+    const unlockBodyScroll = () => {
+      if (!isMobile()) return;
+      bodyEl.classList.remove('pb-product-modal-open');
+      bodyEl.classList.remove('pb-modal-open');
+    };
 
     let activeModelId = null;
     let activeVariantIndex = 0;
