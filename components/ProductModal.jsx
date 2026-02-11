@@ -39,6 +39,19 @@ export default function ProductModal() {
     const basename = (p)=> (p||'').split('/').pop();
     const applyAlias = (name)=> name;
     const fixAssetUrl = (u)=>{ if(!u) return u; const b = basename(u); return u.replace(/[^/]*$/, b); };
+    const formatDescHtml = (raw) => {
+      if (!raw) return '';
+      const str = String(raw);
+      // Si ya trae HTML, respétalo.
+      if (/<(p|br|ul|ol|li|div|span|strong|em|h\d)/i.test(str)) return str;
+      // Convierte saltos dobles en párrafos y simples en <br>
+      return str
+        .split(/\n{2,}/)
+        .map(s => s.trim())
+        .filter(Boolean)
+        .map(block => `<p>${block.replace(/\n/g, '<br />')}</p>`)
+        .join('');
+    };
     const lockBodyScroll = () => { bodyEl.classList.add('pb-modal-open', 'pb-product-modal-open'); };
     const unlockBodyScroll = () => { bodyEl.classList.remove('pb-product-modal-open'); bodyEl.classList.remove('pb-modal-open'); };
 
@@ -133,7 +146,7 @@ export default function ProductModal() {
       if (titleEl) titleEl.textContent = fullTitle;
       if (priceEl) priceEl.textContent = variant.price || '';
       if (subEl)   subEl.textContent   = variant.colorLabel ? String(variant.colorLabel) : '';
-      if (descEl)  descEl.innerHTML  = variant.desc  || '';
+      if (descEl)  descEl.innerHTML  = formatDescHtml(variant.desc);
       if (qtyNumEl) qtyNumEl.textContent = '1';
       if (atcBtnEl){ atcBtnEl.disabled = true; atcBtnEl.textContent = 'Agotado'; atcBtnEl.style.cursor = 'not-allowed'; atcBtnEl.style.opacity = '.6'; }
       const byColor = pickGalleryImages(model, variant);
