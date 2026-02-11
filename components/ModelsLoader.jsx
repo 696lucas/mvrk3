@@ -16,6 +16,7 @@ const COLLECTION_PRODUCTS = `
         edges{
           node{
             id title handle description
+            metafield(namespace:"custom", key:"galeria_por_color"){ value }
             featuredImage { url altText }
             images(first:20){ edges{ node{ url altText } } }
             variants(first:50){
@@ -56,13 +57,20 @@ function formatPrice(amt, cur = 'EUR'){
   catch { return `${amt} ${cur}`; }
 }
 
-function toModel(product){
-  const prodImgs = product?.images?.edges?.map(e => e.node.url) || [];
-  const variantEdges = product?.variants?.edges || [];
+  function toModel(product){
+    const prodImgs = product?.images?.edges?.map(e => e.node.url) || [];
+    const variantEdges = product?.variants?.edges || [];
+    const variantGalleryJson = product?.metafield?.value || null;
+    let variantGallery = null;
+    try{
+      if (variantGalleryJson) variantGallery = JSON.parse(variantGalleryJson);
+    }catch(err){
+      console.warn('[PB] metafield galeria_por_color JSON inválido', err);
+    }
 
-  // Globals like in legacy
-  window.KEY_TO_SIZES = window.KEY_TO_SIZES || new Map();
-  window.KEY_TO_VARIANT = window.KEY_TO_VARIANT || new Map();
+    // Globals like in legacy
+    window.KEY_TO_SIZES = window.KEY_TO_SIZES || new Map();
+    window.KEY_TO_VARIANT = window.KEY_TO_VARIANT || new Map();
 
   if (!variantEdges.length){
     const fImg = product?.featuredImage?.url || prodImgs[0] || '';
@@ -94,11 +102,11 @@ function toModel(product){
     if (!g.imageUrl){ g.imageUrl = node.image?.url || product.featuredImage?.url || prodImgs[0] || ''; }
   }
 
-  const variants = [];
-  for (const g of groups.values()){
-    const nodes = g.nodes;
-    const mainNode = nodes.find(n => n.availableForSale) || nodes[0];
-    const vImg = g.imageUrl || mainNode.image?.url || product.featuredImage?.url || prodImgs[0] || '';
+    const variants = [];
+    for (const g of groups.values()){
+      const nodes = g.nodes;
+      const mainNode = nodes.find(n => n.availableForSale) || nodes[0];
+      const vImg = g.imageUrl || mainNode.image?.url || product.featuredImage?.url || prodImgs[0] || '';
     const cdnKey = base(vImg);
 
     const amountNum = Number(mainNode.price?.amount || 0);
@@ -139,10 +147,11 @@ function toModel(product){
       desc: product?.description || '',
       images: images.slice(0,3),
       soldOut: !available,
+      selectedOptions: mainNode.selectedOptions || []
     });
   }
 
-  return { title: product?.title || '', variants };
+  return { title: product?.title || '', variants, variantGalleryJson, variantGallery };
 }
 
 function mapModels(data){

@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
 export default function ProductModal() {
   const [relatedItems, setRelatedItems] = useState([]);
   const [carouselUrl, setCarouselUrl] = useState('');
   const [carouselAlt, setCarouselAlt] = useState('Producto');
+  const [canCarousel, setCanCarousel] = useState(false);
+  const canCarouselRef = useRef(false);
+  const carouselFnsRef = useRef({ next: () => {}, prev: () => {} });
   useEffect(() => {
     try { window.PB_MODAL_OWNER = 'react'; } catch (_) {}
 
@@ -51,18 +54,28 @@ export default function ProductModal() {
       setCarouselUrl(url || '');
       setCarouselAlt(titleEl?.textContent || 'Producto');
     }
-    function goPrevImg(){ if (!currentImages.length) return; currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length; renderCarouselImage(); }
-    function goNextImg(){ if (!currentImages.length) return; currentImageIndex = (currentImageIndex + 1) % currentImages.length; renderCarouselImage(); }
+    function goPrevImg(){
+      if (!canCarouselRef.current || currentImages.length < 2) return;
+      currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
+      renderCarouselImage();
+    }
+    function goNextImg(){
+      if (!canCarouselRef.current || currentImages.length < 2) return;
+      currentImageIndex = (currentImageIndex + 1) % currentImages.length;
+      renderCarouselImage();
+    }
     // Mobile/desktop swipe support (no arrows)
     let startX = 0, startY = 0, isPointerDown = false, didSwipe = false;
     const SWIPE_THRESH = 40; // px
     const onPointerDown = (e) => {
+      if (!canCarouselRef.current || currentImages.length <= 1) return;
       isPointerDown = true; didSwipe = false;
       const p = e.touches ? e.touches[0] : e;
       startX = p.clientX; startY = p.clientY;
     };
     const onPointerMove = (e) => {
       if (!isPointerDown) return;
+      if (!canCarouselRef.current || currentImages.length <= 1) return;
       const p = e.touches ? e.touches[0] : e;
       const dx = p.clientX - startX; const dy = p.clientY - startY;
       if (!didSwipe && Math.abs(dx) > SWIPE_THRESH && Math.abs(dx) > Math.abs(dy) * 1.2) {
@@ -84,7 +97,35 @@ export default function ProductModal() {
 
     // Swipe support removed to restore previous behavior
 
-    function renderMedia(images){ currentImages = images || []; currentImageIndex = 0; renderCarouselImage(); }
+    function renderMedia(images){
+      currentImages = images || [];
+      currentImageIndex = 0;
+      const enabled = currentImages.length > 1;
+      canCarouselRef.current = enabled;
+      setCanCarousel(enabled);
+      renderCarouselImage();
+    }
+
+    // Expose carousel controls to JSX buttons
+    carouselFnsRef.current = { next: goNextImg, prev: goPrevImg };
+
+    function getColorValue(variant){
+      if (variant?.colorLabel) return String(variant.colorLabel).trim();
+      const opts = variant?.selectedOptions || [];
+      const c = opts.find(o => String(o?.name||'').toLowerCase() === 'color');
+      return c ? String(c.value||'').trim() : '';
+    }
+
+    function pickGalleryImages(model, variant){
+      const gallery =
+        model?.variantGallery ||
+        (model?.variantGalleryJson ? (()=>{ try { return JSON.parse(model.variantGalleryJson); } catch { return null; } })() : null);
+      if (!gallery || typeof gallery !== 'object') return null;
+      const color = getColorValue(variant);
+      const key = color || 'default';
+      const arr = gallery[key];
+      return Array.isArray(arr) ? arr : null;
+    }
 
     // Legacy base updater
     function baseUpdateVariantContent(model, variant){
@@ -95,7 +136,18 @@ export default function ProductModal() {
       if (descEl)  descEl.textContent  = variant.desc  || '';
       if (qtyNumEl) qtyNumEl.textContent = '1';
       if (atcBtnEl){ atcBtnEl.disabled = true; atcBtnEl.textContent = 'Agotado'; atcBtnEl.style.cursor = 'not-allowed'; atcBtnEl.style.opacity = '.6'; }
-      renderMedia(Array.isArray(variant.images) ? variant.images.map(fixAssetUrl) : []);
+      const byColor = pickGalleryImages(model, variant);
+
+      // Metafield => usar sus imágenes. Sin metafield => solo la primera imagen para evitar carrusel.
+      let imgs = [];
+      if (Array.isArray(byColor) && byColor.length > 0) {
+        imgs = byColor;
+      } else {
+        const fallback = Array.isArray(variant.images) ? variant.images : [];
+        imgs = fallback.length ? [fallback[0]] : [];
+      }
+
+      renderMedia(imgs.map(fixAssetUrl));
       renderRelated(variant.key);
     }
 
@@ -290,6 +342,26 @@ export default function ProductModal() {
             <div className="pb-prod-carousel-frame">
               <Image id="pbCarouselImage" className="pb-prod-carousel-image" alt={carouselAlt} src={carouselUrl || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='} width={500} height={500} unoptimized />
             </div>
+            {canCarousel && (
+              <>
+                <button
+                  type="button"
+                  aria-label="Anterior"
+                  onClick={(e)=>{ e.stopPropagation(); carouselFnsRef.current.prev(); }}
+                  style={{ position:'absolute', left:'6px', top:'50%', transform:'translateY(-50%)', background:'transparent', border:'none', padding:'6px', cursor:'pointer', zIndex:3 }}
+                >
+                  <img src="/icon/flechaizquierda.png" alt="Anterior" style={{ width:'42px', height:'42px', filter:'drop-shadow(0 4px 8px rgba(0,0,0,.35))' }} />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Siguiente"
+                  onClick={(e)=>{ e.stopPropagation(); carouselFnsRef.current.next(); }}
+                  style={{ position:'absolute', right:'6px', top:'50%', transform:'translateY(-50%)', background:'transparent', border:'none', padding:'6px', cursor:'pointer', zIndex:3 }}
+                >
+                  <img src="/icon/flechaderecha.png" alt="Siguiente" style={{ width:'42px', height:'42px', filter:'drop-shadow(0 4px 8px rgba(0,0,0,.35))' }} />
+                </button>
+              </>
+            )}
           </div>
 
           <div className="pb-prod-details">

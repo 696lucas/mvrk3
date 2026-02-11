@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect } from 'react';
 
 export default function Collage() {
@@ -33,6 +31,16 @@ export default function Collage() {
     }
 
     const clamp = (x,min,max)=> Math.min(max, Math.max(min,x));
+    const normalizeText = (s='') => String(s||'').toLowerCase();
+    const hasKeyword = (text, keywords=[]) => {
+      const t = normalizeText(text);
+      return keywords.some(k => t.includes(k));
+    };
+    const safeMod = (v, fallback = 1) => {
+      const n = Number(v);
+      if (!Number.isFinite(n) || n <= 0) return fallback;
+      return Math.min(2, Math.max(0.4, n));
+    };
 
     function mulberry32(seed){
       return function(){
@@ -96,16 +104,20 @@ export default function Collage() {
         }
 
         function colorKeyOf(v){
-          const key = fromSelectedOptions(v) || fromTitle(v) || v?.colorLabel || 'default';
+          const key =
+            fromSelectedOptions(v) ||
+            fromTitle(v) ||
+            v?.colorLabel ||
+            'default';
           return String(key).trim().toLowerCase();
         }
 
         function better(a,b){
           if (!a) return true;
           if (!!a.availableForSale !== !!b.availableForSale) return !!b.availableForSale;
-          const aImg = !!((a.images||[])[0] || a?.image?.url);
-          const bImg = !!((b.images||[])[0] || b?.image?.url);
-          if (aImg !== bImg) return bImg;
+          const aHasImg = !!((a.images||[])[0] || a?.image?.url);
+          const bHasImg = !!((b.images||[])[0] || b?.image?.url);
+          if (aHasImg !== bHasImg) return bHasImg;
           return false;
         }
 
@@ -115,18 +127,23 @@ export default function Collage() {
           if (better(cur, v)) byColor.set(ck, v);
         }
 
-        if (byColor.size === 0 && (model.images||[]).length){
+        if (byColor.size === 0 && model.images?.length){
           const first = model.images[0];
-          items.push({ base: basename(first), url: fixAssetUrl(first), modelId, variantIndex: 0 });
+          items.push({
+            base: applyAlias(basename(first)),
+            url: fixAssetUrl(first),
+            modelId,
+            variantIndex: 0
+          });
           continue;
         }
 
         for (const v of byColor.values()){
-          const imgs = (v.images||[]).length ? v.images : model.images||[];
+          const imgs = v.images?.length ? v.images : model.images || [];
           const first = imgs[0] || v?.image?.url;
           if (!first) continue;
           items.push({
-            base: basename(first),
+            base: applyAlias(basename(first)),
             url: fixAssetUrl(first),
             modelId,
             variantIndex: Math.max(0, variants.indexOf(v))
@@ -150,40 +167,55 @@ export default function Collage() {
         return;
       }
 
-      const seed = CFG.seed ?? getSeed();
-      const rnd = mulberry32(seed);
+      const rnd = mulberry32(CFG.seed ?? getSeed());
       const items = shuffle([...allItems], rnd);
 
       const heroH = $hero.getBoundingClientRect().height;
       const availH = Math.max(220, window.innerHeight - heroH);
 
-      // ⬇⬇ MÁS AIRE LATERAL
       const rectW = clamp(
-        window.innerWidth * (CFG.widthFactor || 0.72),
+        window.innerWidth * (CFG.widthFactor||0.76),
         window.innerWidth * 0.55,
-        window.innerWidth - 2 * (CFG.sideSafe || 36)
+        window.innerWidth - 2 * (CFG.sideSafe||10)
       );
 
       const rectL = (window.innerWidth - rectW) / 2;
       const rectT = 0;
 
-      const isMobile = window.matchMedia('(max-width:768px)').matches;
+      const isMobile = window.matchMedia && window.matchMedia('(max-width:768px)').matches;
       const colsMin = isMobile ? 2 : 3;
       const colsMax = 10;
 
-      // ⬇⬇ CONTROL ESTRICTO DE SCROLL
-      const maxHeight = availH * (1 + (CFG.scrollAllowancePct || 0.12));
+      const maxHeight = availH * (1 + (CFG.scrollAllowancePct||0.22));
+
+      const hoodieModCfg = CFG.hoodieScale ?? CFG.modHoodie ?? CFG.modifiers?.hoodieScale;
+      const hoodieRedCfg = CFG.hoodieRedScale ?? CFG.modHoodieRed ?? CFG.modifiers?.hoodieRedScale;
+      const hatModCfg = CFG.hatScale ?? CFG.modHat ?? CFG.modifiers?.hatScale;
+      const hoodieScale = safeMod(hoodieModCfg, 1.08);
+      const hoodieRedScale = safeMod(hoodieRedCfg, 0.9);
+      const hatScale = safeMod(hatModCfg, 0.9);
+
+      function itemScaleFor(item){
+        const base = normalizeText(item.base);
+        const model = normalizeText(item.modelId);
+        const isHat = model.includes('hat') || hasKeyword(base, ['gorra','cap','hat']);
+        const isHoodie = model.includes('hoodie') || hasKeyword(base, ['sudadera','hoodie']);
+        const isBlack = hasKeyword(base, ['negra','negro','black']);
+        const isBlue = hasKeyword(base, ['azul','blue']);
+        const isRed = hasKeyword(base, ['roja','rojo','red']);
+        if (isHat) return hatScale;
+        if (isHoodie && isRed) return hoodieRedScale;
+        if (isHoodie && (isBlack || isBlue)) return hoodieScale;
+        return 1;
+      }
 
       let best=null;
 
       function layout(cols, scale){
-        // ⬇⬇ PRENDAS MÁS PEQUEÑAS
-        const cellW = (rectW / cols) * scale * 0.92;
-        const rowPitch = Math.max(120, cellW * (CFG.rowPitchScale || 0.78));
+        const cellW = (rectW / cols) * scale;
+        const rowPitch = Math.max(120, cellW * (CFG.rowPitchScale||0.84));
         const rows = Math.ceil(items.length / cols);
-        const rectH = rows * rowPitch
-          + (CFG.topSafe || 24)
-          + (CFG.bottomSafe || 28);
+        const rectH = rows * rowPitch + (CFG.topSafe||8) + (CFG.bottomSafe||10);
         return { cellW, rowPitch, rows, rectH, cols, scale };
       }
 
@@ -191,8 +223,7 @@ export default function Collage() {
         for(let s=1.05;s>=0.60;s-=0.02){
           const L = layout(c,s);
           if (L.rectH <= maxHeight){
-            const score = Math.min(L.cellW, rectW * 0.22)
-              - Math.abs(maxHeight - L.rectH) * 0.0015;
+            const score = L.cellW - Math.abs(maxHeight - L.rectH) * 0.0015;
             if (!best || score > best.score) best = { ...L, score };
             break;
           }
@@ -202,16 +233,16 @@ export default function Collage() {
       if (!best) best = layout(colsMax, 0.60);
 
       const { cols, cellW, rowPitch, rows, scale } = best;
-      const rotMax = isMobile ? 4 : 6;
-      const jx = cellW * 0.10;
-      const jy = rowPitch * 0.10;
+      const rotMax = isMobile ? (CFG.rotMaxMobile||4) : (CFG.rotMaxDesktop||6);
+      const jx = cellW * (CFG.jitterXPct||0.10);
+      const jy = rowPitch * (CFG.jitterYPct||0.10);
 
-      const rectH = rows * rowPitch + (CFG.topSafe||24) + (CFG.bottomSafe||28);
+      const rectH = rows * rowPitch + (CFG.topSafe||8) + (CFG.bottomSafe||10);
       $collage.style.height = rectH + 'px';
       $collage.innerHTML = '';
 
-      const rowOrder = centerOut(rows);
-      const colOrder = centerOut(cols);
+      const rowOrder = CFG.distributeFromCenter!==false ? centerOut(rows) : [...Array(rows).keys()];
+      const colOrder = CFG.distributeFromCenter!==false ? centerOut(cols) : [...Array(cols).keys()];
 
       let index=0;
 
@@ -220,32 +251,46 @@ export default function Collage() {
           if (index >= items.length) break;
 
           let ax = rectL + (c + 0.5) * (rectW / cols);
-          let ay = rectT + (CFG.topSafe||24) + (r + 0.5) * rowPitch;
+          let ay = rectT + (CFG.topSafe||8) + (r + 0.5) * rowPitch;
 
           ax += (rnd()*2-1)*jx;
           ay += (rnd()*2-1)*jy;
 
-          ax = clamp(ax, rectL + (CFG.sideSafe||36), rectL + rectW - (CFG.sideSafe||36));
-          ay = clamp(ay, rectT + (CFG.topSafe||24), rectT + rectH - (CFG.bottomSafe||28));
+          const { base, url, modelId, variantIndex } = items[index++];
 
-          const sc = ((CFG.scaleMin||0.90)
-            + rnd() * ((CFG.scaleMax||0.98) - (CFG.scaleMin||0.90))) * scale;
+          const baseScale = ((CFG.scaleMin||0.94) +
+            rnd() * ((CFG.scaleMax||1.02) - (CFG.scaleMin||0.94))) * (scale||1);
+
+          const itemScale = itemScaleFor({ base, modelId });
+          const sc = baseScale * itemScale;
+
+          // ligera corrección para evitar cortes inferiores sin añadir scroll
+          const imgW = Math.max(80, Math.floor(cellW)) * sc;
+          const halfH = imgW * 0.55; // estimación altura/2
+          const baseTop = rectT + (CFG.topSafe||8);
+          const baseBottom = rectT + rectH - (CFG.bottomSafe||10);
+          let bottomLimit = baseBottom - halfH * 0.35;
+          const topLimit = baseTop + 6;
+          if (bottomLimit < topLimit) bottomLimit = topLimit;
+
+          ax = clamp(ax, rectL + (CFG.sideSafe||10), rectL + rectW - (CFG.sideSafe||10));
+          ay = clamp(ay, topLimit, bottomLimit);
 
           const rot = (rnd()*2*rotMax - rotMax).toFixed(1) + 'deg';
-          const z = Math.floor(r * cols + c + rnd() * 1200);
-
-          const { base, url, modelId, variantIndex } = items[index++];
+          const z = Math.floor(r * cols + c + rnd() * (CFG.zSpread||1200));
 
           const el = document.createElement('div');
           el.className = 'piece';
           el.style.setProperty('--tx', (ax - window.innerWidth/2) + 'px');
-          el.style.setProperty('--ty', (ay - rectH/2) + 'px');
+          el.style.setProperty('--ty', (ay - (rectT + rectH/2)) + 'px');
           el.style.setProperty('--rot', rot);
           el.style.setProperty('--sc', sc);
+          el.style.setProperty('--itemScale', itemScale);
           el.style.setProperty('--z', z);
           el.style.setProperty('--w', `${Math.max(80, Math.floor(cellW))}px`);
-          el.dataset.modelId = modelId;
-          el.dataset.variantIndex = variantIndex;
+          el.dataset.base = base;
+          if (modelId) el.dataset.modelId = modelId;
+          if (variantIndex != null) el.dataset.variantIndex = String(variantIndex);
           el.innerHTML = `<img src="${url}" alt="${base}"/>`;
 
           $collage.appendChild(el);
@@ -254,28 +299,33 @@ export default function Collage() {
     }
 
     window.pbRefreshCollage = renderCollage;
-
-    if (window.PB_MODELS_LOADED) renderCollage();
+    try { if (window.PB_MODELS_LOADED) renderCollage(); } catch (_) {}
 
     const $collage = document.getElementById('collage');
     const onClick = (e) => {
       const piece = e.target.closest('.piece');
       if (!piece) return;
       const modelId = piece.dataset.modelId;
-      const variantIndex = parseInt(piece.dataset.variantIndex||'0',10);
-      if (window.openProductModalByModelAndVariant){
+      const variantIndex = parseInt(piece.dataset.variantIndex || '0', 10);
+      if (modelId && typeof window.openProductModalByModelAndVariant === 'function') {
         window.openProductModalByModelAndVariant(modelId, variantIndex);
       }
     };
 
-    $collage?.addEventListener('click', onClick);
-    return () => $collage?.removeEventListener('click', onClick);
+    $collage && $collage.addEventListener('click', onClick);
+    return () => {
+      $collage && $collage.removeEventListener('click', onClick);
+    };
   }, []);
 
   return (
     <main role="main">
       <h1 className="sr-only">Catálogo — Pórtate Bien</h1>
-      <section id="collage" className="collage" />
+      <section
+        id="collage"
+        className="collage"
+        aria-label="Prendas en collage"
+      />
     </main>
   );
 }

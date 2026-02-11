@@ -19,6 +19,10 @@ const BASE_TRACKS = [
   // name = nombre base lógico del track (y el que se verá si no pones title)
   // coverFile/audioFile = nombres reales de archivo en /public/portadas y /public/canciones
 
+  { name: 'Alguien', title: 'Alguien', coverFile: 'alguien.png', audioFile: 'caos! - Alguien.mp3' },
+  { name: 'CHAYANNE', title: 'CHAYANNE', coverFile: 'chayane.png', audioFile: 'ShakeDaBlock! - CHAYANNE.mp3' },
+  { name: 'Coi Leray (Remix)', title: 'Coi Leray (Remix)', coverFile: 'coileray.png', audioFile: 'Fronti - Coi Leray (Remix).mp3' },
+
   { name: 'Tempo 2', title: 'Tempo 2', coverFile: 'Tempo 2.png', audioFile: 'Carolina Durante - Tempo 2.mp3' },
   { name: 'Black Jeep', title: 'Black Jeep', coverFile: 'Black Jeep.png', audioFile: 'fakemink - Black Jeep.mp3' },
   { name: 'Estrella Michelin', title: 'Estrella Michelin', coverFile: 'Estrella Michelin.png', audioFile: 'Guxo - Estrella Michelin.mp3' },

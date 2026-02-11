@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 
@@ -8,58 +8,37 @@ const SECTIONS = [
     label: "Política de cookies",
     content: (
       <>
-        <p>
-          La presente Política de cookies forma parte de la Política de privacidad del Sitio Web
-          https://shop.mvrk.es, titularidad de MARCOS CERVERA GARCÍA, S.L.
-        </p>
+        <p>La presente Política de cookies forma parte de la Política de privacidad del Sitio Web www.mvrk.es.</p>
         <h4>1. ¿Qué son las cookies?</h4>
         <p>
-          Las cookies son pequeños archivos de texto que se almacenan en el dispositivo del usuario
-          (ordenador, smartphone, tablet, etc.) cuando visita determinadas páginas web. Permiten, entre
-          otras cosas, recordar determinadas acciones y preferencias del usuario para que no tenga que
-          volver a configurarlas al volver al sitio o navegar entre páginas.
+          Las cookies son pequeños archivos de texto que se almacenan en el dispositivo del usuario cuando visita determinadas páginas web. Permiten recordar
+          acciones y preferencias para no tener que configurarlas de nuevo al navegar.
         </p>
         <h4>2. Tipos de cookies utilizadas</h4>
-        <p>En el Sitio Web se pueden utilizar las siguientes categorías de cookies:</p>
+        <p>En el Sitio Web se pueden utilizar:</p>
         <ul>
-          <li>
-            <strong>Cookies técnicas o necesarias:</strong> imprescindibles para el funcionamiento del Sitio Web
-            (carrito, pago, sesión). No requieren consentimiento.
-          </li>
-          <li>
-            <strong>Cookies de preferencias o personalización:</strong> recuerdan información como idioma o tipo de
-            navegador.
-          </li>
-          <li>
-            <strong>Cookies de análisis o medición:</strong> permiten cuantificar usuarios y uso del Sitio Web para
-            mejorar la oferta de productos y servicios.
-          </li>
-          <li>
-            <strong>Cookies de publicidad comportamental:</strong> almacenan información sobre el comportamiento de
-            navegación para mostrar publicidad en función de un perfil.
-          </li>
+          <li><strong>Cookies técnicas o necesarias:</strong> imprescindibles para el funcionamiento (carrito, pago, inicio de sesión). No requieren consentimiento.</li>
+          <li><strong>Cookies de preferencias o personalización:</strong> recuerdan idioma u otras opciones de acceso.</li>
+          <li><strong>Cookies de análisis o medición:</strong> cuantifican usuarios y uso del sitio para mejorar productos y servicios.</li>
+          <li><strong>Cookies de publicidad comportamental:</strong> elaboran perfiles de navegación para mostrar publicidad según esos perfiles.</li>
         </ul>
         <p>
-          Detalla aquí las cookies/servicios que realmente uses (p.ej., Google Analytics, píxel de
-          Facebook/Instagram, etc.). Cada app suele aportar su propia tabla de cookies.
+          [Aquí debes detallar qué cookies/servicios usas realmente: p.ej., Google Analytics, píxel de Facebook/Instagram, etc. Cada app de Shopify suele
+          aportar su propia descripción y tabla de cookies.]
         </p>
         <h4>3. Gestión del consentimiento</h4>
         <p>
-          Al acceder por primera vez al Sitio Web, se muestra un banner o panel de configuración que
-          permite aceptar todas las cookies, rechazar las no necesarias o configurar por categorías. El
-          usuario puede modificar su configuración en cualquier momento desde el panel o mediante su
-          navegador.
+          Al entrar por primera vez se muestra un banner o panel para aceptar todas las cookies, rechazar las no necesarias o configurarlas por categorías. El
+          usuario puede modificar sus preferencias en cualquier momento desde ese panel o desde su navegador.
         </p>
-        <h4>4. Cómo desactivar o eliminar las cookies desde el navegador</h4>
+        <h4>4. Cómo desactivar o eliminar cookies desde el navegador</h4>
         <p>
-          El usuario puede permitir, bloquear o eliminar las cookies instaladas en su equipo mediante la
-          configuración del navegador (Chrome, Firefox, Safari, Edge u otros). Consulta las páginas de ayuda
-          oficiales de cada navegador.
+          Se pueden permitir, bloquear o eliminar cookies desde la configuración del navegador (Chrome, Firefox, Safari, Edge, etc.). Consulta la ayuda oficial de
+          cada navegador.
         </p>
         <h4>5. Actualización de la Política de cookies</h4>
         <p>
-          Esta Política puede modificarse por cambios legales o por cambios en el uso de cookies en el Sitio
-          Web. Revisa periódicamente esta política.
+          Esta política puede modificarse por cambios legales o por cambios en el uso de cookies. Revisa la política periódicamente.
         </p>
       </>
     ),
@@ -69,83 +48,60 @@ const SECTIONS = [
     label: "Política de privacidad",
     content: (
       <>
-        <p>
-          En cumplimiento del Reglamento (UE) 2016/679 (RGPD) y de la LOPDGDD, se informa a los usuarios
-          del Sitio Web sobre el tratamiento de sus datos personales.
-        </p>
+        <p>En cumplimiento del RGPD y la LOPDGDD se informa sobre el tratamiento de datos personales.</p>
         <h4>1. Responsable del tratamiento</h4>
         <p>
-          MARCOS CERVERA GARCÍA, S.L. · CIF: B-75910133 · Email:{" "}
-          <a href="mailto:shop@mvrk.es">shop@mvrk.es</a>
+          Responsable: www.mvrk.es · Email de contacto: <a href="mailto:shop@mvrk.es">shop@mvrk.es</a>
         </p>
         <h4>2. Datos personales que tratamos</h4>
         <ul>
           <li>Identificativos: nombre, apellidos.</li>
           <li>Contacto: dirección postal, email.</li>
-          <li>
-            Transacción: productos, importe, número de pedido, método de pago (la pasarela gestiona la
-            tarjeta; el Responsable no accede a ella).
-          </li>
+          <li>Transacción: productos adquiridos, importe, número de pedido, método de pago (los datos de tarjeta los gestiona la pasarela; el Responsable no accede a ellos).</li>
           <li>Navegación: IP, dispositivo, navegador, páginas visitadas, tiempo de permanencia (cookies).</li>
         </ul>
-        <h4>3. Finalidades</h4>
+        <h4>3. Finalidades del tratamiento</h4>
         <ul>
           <li>Gestionar compras: pedidos, cobros, envíos, devoluciones y atención al cliente.</li>
-          <li>Atender consultas y reclamaciones enviadas a través del email de contacto.</li>
-          <li>Cumplir obligaciones legales (fiscal, contable, consumo).</li>
-          <li>
-            Enviar comunicaciones comerciales sobre Mvrk y merchandising cuando el usuario lo haya
-            autorizado expresamente.
-          </li>
-          <li>Analizar el uso del Sitio Web (según cookies aceptadas) para mejorar la experiencia.</li>
+          <li>Atender consultas, solicitudes e incidencias enviadas al email de contacto.</li>
+          <li>Cumplir obligaciones legales (fiscal, contable, consumo, etc.).</li>
+          <li>Enviar comunicaciones comerciales sobre Mvrk y su merchandising cuando el usuario lo haya autorizado expresamente (newsletter, casilla de consentimiento).</li>
+          <li>Analizar el uso del Sitio Web mediante herramientas estadísticas para mejorar la experiencia (según cookies aceptadas).</li>
         </ul>
         <h4>4. Legitimación</h4>
         <ul>
-          <li>Ejecución de contrato de compraventa o medidas precontractuales (art. 6.1.b RGPD).</li>
+          <li>Ejecución de un contrato de compraventa o medidas precontractuales (art. 6.1.b RGPD).</li>
           <li>Cumplimiento de obligaciones legales (art. 6.1.c RGPD).</li>
           <li>Consentimiento para comunicaciones comerciales y cookies no técnicas (art. 6.1.a RGPD).</li>
-          <li>Interés legítimo en mejorar el servicio (art. 6.1.f RGPD), dentro de los límites normativos.</li>
+          <li>Interés legítimo en mejorar el servicio y la experiencia (art. 6.1.f RGPD) dentro de los límites normativos.</li>
         </ul>
-        <h4>5. Destinatarios</h4>
+        <h4>5. Destinatarios de los datos</h4>
         <p>
-          No se cederán datos a terceros salvo obligación legal. Para prestar el servicio puede ser necesario
-          compartir datos con proveedores tecnológicos y hosting, plataformas de e-commerce y pago
-          (Shopify), transporte y logística, y proveedores de analítica/marketing según la Política de cookies
-          y el consentimiento del usuario. Se firmarán contratos de encargo de tratamiento cuando proceda.
+          No se cederán datos a terceros salvo obligación legal. Para prestar el servicio puede ser necesario compartir datos con proveedores tecnológicos y de
+          hosting, plataformas de e-commerce y pago (Shopify), transporte y logística, y proveedores de analítica/marketing según la Política de cookies y el
+          consentimiento prestado. Se firmarán contratos de encargo de tratamiento cuando proceda.
         </p>
         <h4>6. Transferencias internacionales</h4>
         <p>
-          Si se usan servicios con transferencias internacionales (p.ej., algunas herramientas de Shopify,
-          analítica o email marketing), se adoptarán garantías como cláusulas contractuales tipo o decisiones
-          de adecuación.
+          Si se usan servicios que impliquen transferencias internacionales (p.ej., herramientas de Shopify, analítica o email marketing), se adoptarán garantías
+          adecuadas (cláusulas contractuales tipo, decisiones de adecuación, etc.).
         </p>
         <h4>7. Plazos de conservación</h4>
         <ul>
-          <li>
-            Datos de clientes: mientras exista relación contractual y, después, durante los plazos legales
-            necesarios (p.ej., documentación fiscal/contable).
-          </li>
-          <li>Comerciales: hasta que el usuario revoque su consentimiento o solicite la supresión.</li>
-          <li>Navegación: según los plazos detallados en la Política de cookies.</li>
+          <li>Datos de clientes: mientras exista relación contractual y, después, durante los plazos legales (fiscal/contable).</li>
+          <li>Comerciales: hasta que el usuario revoque su consentimiento o solicite supresión.</li>
+          <li>Navegación: según los plazos indicados en la Política de cookies.</li>
         </ul>
-        <h4>8. Derechos</h4>
+        <h4>8. Derechos de los usuarios</h4>
         <p>
-          El usuario puede ejercer acceso, rectificación, supresión, oposición, limitación y portabilidad en
-          cualquier momento enviando solicitud a <a href="mailto:shop@mvrk.es">shop@mvrk.es</a> con copia de
-          documento identificativo. Puede reclamar ante la AEPD si considera vulnerados sus derechos.
+          Acceso, rectificación, supresión, oposición, limitación y portabilidad. Para ejercerlos, escribir a <a href="mailto:shop@mvrk.es">shop@mvrk.es</a> indicando el derecho y adjuntando documento identificativo. Se puede reclamar ante la AEPD (<a href="https://www.aepd.es" target="_blank" rel="noreferrer">www.aepd.es</a>).
         </p>
-        <h4>9. Seguridad</h4>
-        <p>
-          MARCOS CERVERA GARCÍA, S.L. ha adoptado medidas técnicas y organizativas para garantizar
-          la confidencialidad, integridad y disponibilidad de los datos personales.
-        </p>
+        <h4>9. Seguridad de los datos</h4>
+        <p>www.mvrk.es ha adoptado medidas técnicas y organizativas para garantizar confidencialidad, integridad y disponibilidad de los datos.</p>
         <h4>10. Menores de edad</h4>
-        <p>
-          Las compras están dirigidas a mayores de 18 años. Si se detectan datos de menores sin
-          consentimiento, se suprimirán inmediatamente.
-        </p>
+        <p>Las compras están dirigidas a mayores de 18 años. Si se detectan datos de menores sin consentimiento, se suprimirán de inmediato.</p>
         <h4>11. Actualización</h4>
-        <p>La política puede modificarse para adaptarse a novedades legales o jurisprudenciales.</p>
+        <p>La política podrá modificarse por cambios legales o en el tratamiento; se anunciará en el Sitio Web.</p>
       </>
     ),
   },
@@ -154,31 +110,19 @@ const SECTIONS = [
     label: "Condiciones de contratación",
     content: (
       <>
-        <p>
-          Estas Condiciones Generales regulan la compra de productos de merchandising del artista Mvrk a
-          través de https://shop.mvrk.es, titularidad de MARCOS CERVERA GARCÍA, S.L. (el “Vendedor”).
-        </p>
+        <p>Las siguientes Condiciones Generales regulan la compra de merchandising del artista Mvrk en https://shop.mvrk.es (el “Sitio Web”).</p>
         <h4>1. Identidad del vendedor</h4>
-        <p>
-          MARCOS CERVERA GARCÍA, S.L. · CIF: B-75910133 · Email atención al cliente:{" "}
-          <a href="mailto:shop@mvrk.es">shop@mvrk.es</a>
-        </p>
-        <h4>2. Aceptación</h4>
-        <p>
-          Al realizar un pedido se aceptan íntegramente estas Condiciones, marcando la casilla
-          correspondiente en el proceso de compra.
-        </p>
+        <p>Vendedor: www.mvrk.es · Email de atención al cliente: <a href="mailto:shop@mvrk.es">shop@mvrk.es</a></p>
+        <h4>2. Aceptación de las condiciones</h4>
+        <p>Al realizar un pedido se aceptan íntegramente estas Condiciones al marcar la casilla correspondiente durante la compra.</p>
         <h4>3. Proceso de compra</h4>
         <ol>
           <li>Seleccionar productos (talla, color, unidades) y añadir al carrito.</li>
-          <li>Revisar resumen con productos, cantidades, precio, impuestos y envío.</li>
-          <li>Indicar datos de envío/facturación y método de pago.</li>
-          <li>Confirmar pago. Se mostrará y enviará confirmación al email facilitado.</li>
+          <li>Revisar resumen con productos, cantidades, precio total, impuestos y gastos de envío.</li>
+          <li>Facilitar datos de envío/facturación y elegir método de pago.</li>
+          <li>Confirmar pago; se mostrará y enviará confirmación al email facilitado.</li>
         </ol>
-        <p>
-          El Vendedor puede rechazar pedidos por datos incompletos, indicios de fraude, falta de stock u
-          otras causas justificadas. Se notificará y, en su caso, se reembolsará el importe.
-        </p>
+        <p>El Vendedor puede rechazar pedidos por datos incompletos, indicios de fraude, falta de stock u otras causas justificadas; se notificará y, si procede, se reembolsará.</p>
         <h4>4. Precios e impuestos</h4>
         <ul>
           <li>Precios en euros (EUR), impuestos incluidos salvo indicación en contrario.</li>
@@ -186,58 +130,35 @@ const SECTIONS = [
           <li>Los productos se facturan según tarifas vigentes al momento de la compra.</li>
         </ul>
         <h4>5. Métodos de pago</h4>
-        <p>
-          Pago con tarjeta de crédito/débito a través de pasarelas seguras integradas en Shopify. El
-          Vendedor no accede a los datos bancarios completos del cliente.
-        </p>
+        <p>Pago con tarjeta de crédito o débito mediante pasarelas seguras integradas en Shopify. El Vendedor no accede a los datos bancarios completos.</p>
         <h4>6. Envíos</h4>
         <ul>
-          <li>Zonas: España.</li>
-          <li>Plazo estimado: 3-5 días laborables desde confirmación (puede variar por incidencias).</li>
-          <li>Transporte: DHL.</li>
-          <li>Coste estándar: 5 € (salvo promociones o condiciones especiales).</li>
-          <li>
-            Si el paquete se devuelve por causa imputable al cliente, los costes del nuevo envío serán a su
-            cargo.
-          </li>
+          <li>Zonas de envío: toda España.</li>
+          <li>Plazo estimado: 3 a 5 días laborables desde la confirmación (salvo incidencias).</li>
+          <li>Empresa de transporte: DHL.</li>
+          <li>Coste estándar: 5 € por pedido (salvo promociones o condiciones especiales).</li>
+          <li>Si el paquete se devuelve por causa imputable al cliente, los costes del nuevo envío serán asumidos por el cliente.</li>
         </ul>
-        <h4>7. Disponibilidad</h4>
-        <p>
-          Todos los pedidos dependen del stock. Si falta stock tras el pedido, se informará y se ofrecerá
-          esperar, cambiar o reembolsar.
-        </p>
+        <h4>7. Disponibilidad de productos</h4>
+        <p>Todos los pedidos están sujetos a disponibilidad. Si falta stock tras el pedido, se informará y se ofrecerá esperar reposición, cambiar producto o reembolsar.</p>
         <h4>8. Derecho de desistimiento (14 días)</h4>
         <p>
-          14 días naturales desde la recepción para desistir. Comunicar por escrito a{" "}
-          <a href="mailto:shop@mvrk.es">shop@mvrk.es</a> indicando pedido, contacto y productos a devolver. Enviar
-          productos sin usar, sin lavar, con embalaje/etiquetas originales. Los gastos de devolución se
-          gestionan caso por caso; contactar antes para condiciones. Reembolso tras comprobar estado, con
-          el mismo método de pago, en máximo 30 días desde recepción de la devolución.
+          14 días naturales desde la recepción para desistir. Comunicar por email a <a href="mailto:shop@mvrk.es">shop@mvrk.es</a> indicando número de pedido, contacto y productos a devolver. Enviar los productos sin usar, sin lavar, con embalaje y etiquetado original. Los gastos de devolución se gestionan caso por caso; contactar previamente para condiciones. Reembolso con el mismo método de pago, en máximo 30 días desde la recepción y comprobación.
         </p>
-        <h4>9. Exclusiones del desistimiento</h4>
-        <p>
-          No se aceptan devoluciones de productos usados, lavados, sin embalaje/etiquetas, en mal estado
-          por causa del cliente, o excepciones legales. Sin perjuicio de devoluciones por producto defectuoso
-          o error de envío.
-        </p>
+        <h4>9. Exclusiones del derecho de desistimiento</h4>
+        <p>No se aceptan devoluciones de productos usados, lavados, sin embalaje/etiquetas, en mal estado por causa del cliente, o cualquier excepción legal. Sin perjuicio de devoluciones por producto defectuoso o error en el envío.</p>
         <h4>10. Productos defectuosos o error en el envío</h4>
         <p>
-          Contactar a <a href="mailto:shop@mvrk.es">shop@mvrk.es</a> lo antes posible, con fotos y descripción. Se
-          ofrecerá sustitución, vale o reembolso. Los gastos de devolución/nuevo envío los asume el
-          Vendedor en estos casos.
+          Contactar con <a href="mailto:shop@mvrk.es">shop@mvrk.es</a> adjuntando fotos y descripción. Se ofrecerá sustitución, vale o reembolso. En estos casos, los gastos de devolución y, en su caso, nuevo envío, los asume el Vendedor.
         </p>
         <h4>11. Cambios de talla</h4>
         <p>
-          14 días naturales desde recepción. Prenda sin usar ni lavar, con etiquetas y embalaje. Condiciones
-          (costes, gestión) se confirman caso por caso vía email.
+          14 días desde la recepción. Prenda sin usar ni lavar, con etiquetas y embalaje original. Las condiciones concretas (costes, gestión) se confirman por email. Contactar indicando pedido, modelo, talla recibida y talla deseada.
         </p>
         <h4>12. Atención al cliente y reclamaciones</h4>
-        <p>Contacto: <a href="mailto:shop@mvrk.es">shop@mvrk.es</a></p>
-        <h4>13. Legislación y jurisdicción</h4>
-        <p>
-          Se aplica la legislación española. Conflictos: Juzgados y Tribunales de Madrid salvo fuero imperativo
-          de consumidores.
-        </p>
+        <p>Email: <a href="mailto:shop@mvrk.es">shop@mvrk.es</a></p>
+        <h4>13. Legislación aplicable y jurisdicción</h4>
+        <p>Legislación española. Para conflictos, Juzgados y Tribunales de Madrid salvo fuero imperativo de consumidores.</p>
       </>
     ),
   },
@@ -247,31 +168,19 @@ const SECTIONS = [
     content: (
       <>
         <p>
-          El Sitio Web https://shop.mvrk.es es titularidad de MARCOS CERVERA GARCÍA, S.L. · CIF:
-          B-75910133 · Contacto: <a href="mailto:shop@mvrk.es">shop@mvrk.es</a>. El acceso y uso del Sitio Web
-          implica aceptar este Aviso Legal.
+          En cumplimiento de la LSSI-CE se informa que el Sitio Web https://shop.mvrk.es es titularidad de www.mvrk.es. Correo de contacto: <a href="mailto:shop@mvrk.es">shop@mvrk.es</a>.
         </p>
+        <p>El acceso y uso del Sitio Web implica la aceptación plena de este Aviso Legal.</p>
         <h4>1. Propiedad intelectual e industrial</h4>
         <p>
-          Contenidos (textos, fotografías, gráficos, logotipos, código, merchandising y elementos asociados
-          a la marca y al artista Mvrk) son propiedad del titular o de terceros con autorización. Prohibida
-          reproducción, distribución, comunicación pública o transformación sin autorización expresa.
+          Todos los contenidos (textos, fotografías, gráficos, logotipos, imágenes, diseño, código fuente, merchandising y elementos asociados a la marca y al artista Mvrk) son propiedad de www.mvrk.es o de terceros autorizantes, protegidos por la normativa de propiedad intelectual e industrial. Queda prohibida su reproducción, distribución, comunicación pública o transformación sin autorización expresa.
         </p>
         <h4>2. Enlaces</h4>
-        <p>
-          Si existen enlaces a sitios de terceros, el titular no controla esos contenidos ni asume
-          responsabilidad sobre ellos.
-        </p>
+        <p>Los enlaces a sitios de terceros son ajenos a www.mvrk.es, que no ejerce control ni asume responsabilidad sobre sus contenidos.</p>
         <h4>3. Limitación de responsabilidad</h4>
-        <p>
-          No se garantiza disponibilidad y continuidad del Sitio Web; se excluye responsabilidad por daños
-          derivados de la falta de disponibilidad o continuidad.
-        </p>
+        <p>www.mvrk.es no garantiza la disponibilidad y continuidad del Sitio Web y excluye responsabilidad por daños derivados de su falta de disponibilidad.</p>
         <h4>4. Legislación aplicable y jurisdicción</h4>
-        <p>
-          Se rige por la legislación española. Conflictos: Juzgados y Tribunales de Madrid, salvo fuero
-          imperativo de consumidores.
-        </p>
+        <p>Se aplicará la legislación española. Las partes se someten a los Juzgados y Tribunales de Madrid, salvo fuero imperativo de consumidores.</p>
       </>
     ),
   },
@@ -307,9 +216,7 @@ export default function PoliciesModal() {
     style.textContent = css;
     document.head.appendChild(style);
 
-    const links = Array.from(
-      document.querySelectorAll('a[href="/shipping"], .pb-footer-link[href="/shipping"]')
-    );
+    const links = Array.from(document.querySelectorAll('a[href="/shipping"], .pb-footer-link[href="/shipping"]'));
     const onClick = (e) => {
       e.preventDefault();
       e.stopPropagation();

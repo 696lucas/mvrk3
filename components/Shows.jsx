@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
 import { useView } from "./view/ViewContext";
@@ -191,6 +191,27 @@ export default function Shows() {
 
       {/* CIUDADES */}
       <section className="content">
+        {/* Nuevas fechas Latinoamérica (CDMX, Bogotá) */}
+        <div className="city-row left">
+          <a
+            href="https://mvrk-cdmx.boletia.com/"
+            target="_blank"
+            className="city"
+          >
+            <img src="/shows/mexico.png" alt="CdMx - 08.May - Foro Niebla" />
+          </a>
+        </div>
+
+        <div className="city-row right">
+          <a
+            href="https://tickets.eticketablanca.com/event/mvrk-bogota-j2q9ly?eventId=6939e87fdd218d70df5403b2"
+            target="_blank"
+            className="city"
+          >
+            <img src="/shows/colombia.png" alt="Bogot� - 15.May - Boro Room" />
+          </a>
+        </div>
+
         <div className="city-row left">
           <a
             href="https://inverfest.com/events/mvrk/"
@@ -199,12 +220,7 @@ export default function Shows() {
           >
             <img src="/shows/madrid.webp" alt="Madrid" />
           </a>
-          <img
-            src="/shows/ampliacion.png"
-            alt="Ampliacion grada y soldout"
-            className="info-tickets"
-            style={{ width: 150 }}
-          />
+          <img src="/shows/sold.png" alt="Sold out" className="info-tickets" />
         </div>
 
         <div className="city-row right">
@@ -339,7 +355,7 @@ export default function Shows() {
           <img src="/shows/sold.png" alt="Sold out" className="info-tickets" />
         </div>
 
-        {/* MÁLAGA — imagen editable con su propio CSS */}
+        {/* MÁLAGA �?" imagen editable con su propio CSS */}
         <div className="city-row right malaga-row">
           <a
             href="https://entradas.crashmusic.es/event/concierto-mvrk-malaga-sala-paris-15-sabado-10-de-enero"
@@ -352,6 +368,7 @@ export default function Shows() {
               className="malaga-img"
             />
           </a>
+          <img src="/shows/sold.png" alt="Sold out" className="info-tickets" />
         </div>
 
         <div className="city-row left">
@@ -397,6 +414,7 @@ export default function Shows() {
           </a>
           <img src="/shows/sold.png" alt="Sold out" className="info-tickets" />
         </div>
+
       </section>
 
       {/* Imagen final, como una sección más */}
@@ -666,6 +684,22 @@ export default function Shows() {
           }
         }
 
+        /* Texto para fechas sin imagen */
+        .city-text{
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          justify-content:center;
+          gap:4px;
+          color:#ffe600;
+          font-weight:900;
+          text-decoration:none;
+          text-align:center;
+          text-shadow: 2px 2px 0 #000, -2px 2px 0 #000, 2px -2px 0 #000, -2px -2px 0 #000;
+          font-size: clamp(18px, 3vw, 30px);
+        }
+        .city-text-line{ line-height:1.1; display:block; }
+
         @media (max-width: 600px) {
           .shows-back {
             left: 8px;
@@ -726,3 +760,5 @@ export default function Shows() {
     </main>
   );
 }
+
+

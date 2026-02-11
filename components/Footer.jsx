@@ -24,7 +24,7 @@ export default function Footer() {
                 <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" />
               </svg>
             </a>
-            <div className="pb-footer-copy">© 2025</div>
+            <div className="pb-footer-copy">© 2026</div>
           </div>
         </div>
       </div>
