@@ -77,7 +77,8 @@ const BASE_TRACKS = [
 const COVER_BASES = ['/videos/portadas'];
 const AUDIO_BASES = ['/videos/canciones'];
 
-const toUrl = (base, file) => encodeURI(`${base}/${file}`);
+// Importante: encodeURIComponent para evitar problemas con #, &, espacios, tildes en los nombres de archivos.
+const toUrl = (base, file) => `${base}/${encodeURIComponent(file)}`;
 
 const TRACKS = BASE_TRACKS.map((t) => {
   // Si algún día renombráis y queréis “por nombre base”:
