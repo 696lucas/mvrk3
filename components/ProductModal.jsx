@@ -19,6 +19,8 @@ export default function ProductModal() {
     const closeBtn = document.getElementById('pbProdCloseBtn');
     const cardEl = modalEl?.querySelector('.pb-product-modal-card');
     if (!modalEl) return;
+    // Safety: if any previous modal left scroll locked, clear it on mount (mobile only).
+    unlockBodyScroll();
 
     const titleEl = document.getElementById('pbProdTitle');
     const priceEl = document.getElementById('pbProdPrice');
@@ -55,6 +57,8 @@ export default function ProductModal() {
       bodyEl.classList.remove('pb-product-modal-open');
       bodyEl.classList.remove('pb-modal-open');
     };
+    // Asegura que el scroll del catálogo quede habilitado al montar (por si quedó bloqueado previamente en móvil)
+    unlockBodyScroll();
 
     let activeModelId = null;
     let activeVariantIndex = 0;
