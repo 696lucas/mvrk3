@@ -42,8 +42,31 @@ main{ position:relative; z-index:1; width:100%; }
 }
 @media (max-width:768px){
   /* Mobile: 3 por fila, centrado, un poco más pequeño y con ligera "desalineación" visual */
-  .collage{ display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start; gap:4px; height:auto !important; padding:10px 6px; }
-  .piece{ position:static; left:auto; top:auto; will-change:auto; z-index:auto; width: 32%; display:flex; justify-content:center; transition: transform .15s ease; }
+  .collage{
+    display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start;
+    gap:10px 6px; height:auto !important; padding:12px 6px;
+  }
+  .piece{
+    position:static; left:auto; top:auto; will-change:auto; z-index:auto;
+    width: 23%;
+    display:flex; justify-content:center; margin-bottom:4px;
+    transition: transform .15s ease;
+  }
+  /* Patrón 4 + 3 + 3 (cíclico cada 10 ítems) */
+  .piece:nth-child(10n+1),
+  .piece:nth-child(10n+2),
+  .piece:nth-child(10n+3),
+  .piece:nth-child(10n+4){
+    width:23%;
+  }
+  .piece:nth-child(10n+5),
+  .piece:nth-child(10n+6),
+  .piece:nth-child(10n+7),
+  .piece:nth-child(10n+8),
+  .piece:nth-child(10n+9),
+  .piece:nth-child(10n+10){
+    width:30.5%;
+  }
   /* sutil desorden por patrón */
   .piece:nth-child(6n+1){ transform: translateY(6px) rotate(-1.2deg); }
   .piece:nth-child(6n+2){ transform: translateY(-4px) rotate(1deg); }
@@ -51,7 +74,13 @@ main{ position:relative; z-index:1; width:100%; }
   .piece:nth-child(6n+4){ transform: translateY(-3px) rotate(-0.8deg); }
   .piece:nth-child(6n+5){ transform: translateY(5px) rotate(1.2deg); }
   .piece:nth-child(6n){ transform: translateY(-5px) rotate(-0.4deg); }
-  .piece img{ width: calc(92% * var(--itemScale,1)); height:auto; max-width:none; max-height:none; object-fit:contain; }
+  .piece img{
+    width: calc(96% * var(--itemScale,1));
+    max-width:100%;
+    height:auto;
+    max-height:180px;
+    object-fit:contain;
+  }
 }
 .sr-only{
   position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
@@ -241,6 +270,8 @@ main{ position:relative; z-index:1; width:100%; }
   color:#fff; font-size:14px; line-height:1.2; font-weight:700; padding:10px 16px; min-width:120px; cursor:not-allowed; opacity:.6;
 }
 .pb-prod-desc{ font-size:14px; line-height:1.4; color:#cfcfcf; white-space:pre-line; }
+.pb-prod-desc ul{ list-style:disc; padding-left:20px; margin:0 0 8px; }
+.pb-prod-desc li{ margin:0 0 4px; }
 
 /* ===== Recomendados (debajo del producto) ===== */
 .pb-related-block{
@@ -481,6 +512,27 @@ main{ position:relative; z-index:1; width:100%; }
   .pb-related-row{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:14px; justify-items:center; }
   .pb-related-card{ width:100%; max-width:220px; }
   .pb-related-imgwrap{ width:100%; }
+}
+
+/* Modal: compact layout en móvil */
+@media (max-width: 768px){
+  #pbProductModal .pb-prod-main{ gap:12px; }
+  #pbProductModal .pb-prod-details{ gap:14px; margin-top:10px; }
+  #pbProductModal .pb-prod-title{ font-size:18px; }
+  #pbProductModal .pb-prod-price{ font-size:16px; }
+  #pbProductModal .pb-prod-desc{ font-size:13px; }
+  #pbProductModal .pb-prod-colors-block,
+  #pbProductModal .pb-prod-sizes-block{ gap:6px; }
+  #pbProductModal .pb-color-row,
+  #pbProductModal .pb-sizes-row{ gap:6px; }
+  #pbProductModal .pb-color-pill,
+  #pbProductModal .pb-size-pill{
+    padding:5px 9px;
+    font-size:12px;
+    border-radius:5px;
+  }
+  #pbProductModal .pb-purchase-row{ gap:10px; }
+  #pbProductModal .pb-qty-box{ min-width:82px; }
 }
 
 
