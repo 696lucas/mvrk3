@@ -73,9 +73,9 @@ const BASE_TRACKS = [
   { name: 'YOTMB', title: 'YOTMB', coverFile: 'YOTMB.png', audioFile: 'MVRK - YOTMB.mp3' },
 ];
 
-// NUEVAS BASES (SIN /videos)
-const COVER_BASES = ['/videos/portadas'];
-const AUDIO_BASES = ['/videos/canciones'];
+// Rutas en /public (evita /videos/, que ya no usamos)
+const COVER_BASES = ['/portadas'];
+const AUDIO_BASES = ['/canciones'];
 
 const toUrl = (base, file) => encodeURI(`${base}/${file}`);
 
