@@ -21,6 +21,22 @@ body{
   padding:clamp(12px,3vw,28px);
 }
 .hero img{ height:clamp(120px,22vw,300px); width:auto; display:block }
+.hero-free-ship{
+  position:absolute; top:8px; left:50%; transform:translateX(-50%);
+  padding:5px 12px; border-radius:999px;
+  color:#fff; font-weight:800; letter-spacing:.04em;
+  font-size:clamp(11px,2.6vw,14px); text-transform:uppercase; text-align:center;
+  animation: hero-vibrate 2.2s ease-in-out infinite;
+  
+}
+
+@keyframes hero-vibrate{
+  0%,100%{ transform:translateX(-50%) translate3d(0,0,0) rotate(0deg); }
+  20%{ transform:translateX(-50%) translate3d(1px,-1px,0) rotate(-0.4deg); }
+  40%{ transform:translateX(-50%) translate3d(-1px,1px,0) rotate(0.4deg); }
+  60%{ transform:translateX(-50%) translate3d(1.2px,0.6px,0) rotate(-0.3deg); }
+  80%{ transform:translateX(-50%) translate3d(-0.8px,-0.6px,0) rotate(0.3deg); }
+}
 
 /* ===== COLLAGE ===== */
 main{ position:relative; z-index:1; width:100%; }
