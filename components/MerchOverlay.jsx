@@ -75,8 +75,6 @@ export default function MerchOverlay() {
           background: transparent;
           opacity: 0;
           transform: translateY(-40px);
-          overflow-y: auto;
-          -webkit-overflow-scrolling: touch;
           animation: pb-merch-enter 520ms cubic-bezier(0.2, 0.8, 0.2, 1)
             forwards;
         }
