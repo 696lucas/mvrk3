@@ -25,7 +25,7 @@ const BASE_TRACKS = [
 
   { name: 'Tempo 2', title: 'Tempo 2', coverFile: 'Tempo 2.png', audioFile: 'Carolina Durante - Tempo 2.mp3' },
   { name: 'Black Jeep', title: 'Black Jeep', coverFile: 'Black Jeep.png', audioFile: 'fakemink - Black Jeep.mp3' },
-  { name: 'Estrella Michelin', title: 'Estrella Michelin', coverFile: 'Estrella Michelin.png', audioFile: 'Guxo - Estrella Michelin.mp3' },
+  { name: 'Estrella Michelin', title: 'Estrella Michelin', coverFile: 'Estrella michelin.png', audioFile: 'Guxo - Estrella Michelin (feat. eestsyde.xo).mp3' },
   { name: 'Suano', title: 'Suano', coverFile: 'suano.png', audioFile: 'Ntg - Suano.mp3' },
   { name: 'SONRIE', title: 'SONRIE', coverFile: 'SONRIE.png', audioFile: 'Raly - SONRIE.mp3' },
   { name: 'Brandy Boo', title: 'Brandy Boo', coverFile: 'Brandy Boo.png', audioFile: 'Yung Brandy - Brandy Boo.mp3' },
@@ -58,13 +58,13 @@ const BASE_TRACKS = [
   { name: 'Intergaláctica', title: 'Intergaláctica', coverFile: 'INTERGALACTICA.png', audioFile: 'ANB - Intergaláctica.mp3' },
 
   // P&M&M: portada "P&M&M.png", audio "Biberon - P M M (...).mp3"
-  { name: 'P&M&M', title: 'P&M&M', coverFile: 'P&M&M.png', audioFile: 'Biberon - P M M (feat. alberrt).mp3' },
+  { name: 'P&M&M', title: 'P&M&M', coverFile: 'P&M&M.png', audioFile: 'Bíberon - P M M (feat. alberrrt).mp3' },
 
   // DIGITAL15: portada "digital 15.png", audio "Yk l t 5 Junaa - DIGITAL15.mp3"
-  { name: 'DIGITAL15', title: 'DIGITAL15', coverFile: 'digital 15.png', audioFile: 'Yk l t 5 Junaa - DIGITAL15.mp3' },
+  { name: 'DIGITAL15', title: 'DIGITAL15', coverFile: 'digital 15.png', audioFile: 'Yk It s Junaa - DIGITAL15.mp3' },
 
   // ENGANCHAO: portada "enganchao.png", audio "Biberon - ENGANCHAO.mp3"
-  { name: 'ENGANCHAO', title: 'ENGANCHAO', coverFile: 'enganchao.png', audioFile: 'Biberon - ENGANCHAO.mp3' },
+  { name: 'ENGANCHAO', title: 'ENGANCHAO', coverFile: 'enganchao.png', audioFile: 'Bíberon - ENGANCHAO (feat. Dalsy).mp3' },
 
   // NoSTOi: portada "NoSTOi.png", audio "MVRK - NoSTOi.mp3"
   { name: 'NoSTOi', title: 'NoSTOi', coverFile: 'NoSTOi.png', audioFile: 'MVRK - NoSTOi.mp3' },
