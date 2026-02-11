@@ -41,7 +41,7 @@ export default function ProductModal() {
     const fixAssetUrl = (u)=>{ if(!u) return u; const b = basename(u); return u.replace(/[^/]*$/, b); };
     const formatDescHtml = (raw) => {
       if (!raw) return '';
-      const str = String(raw);
+      const str = String(raw).replace(/\r\n/g, '\n');
       // Si ya trae HTML, respétalo.
       if (/<(p|br|ul|ol|li|div|span|strong|em|h\d)/i.test(str)) return str;
       // Convierte saltos dobles en párrafos y simples en <br>
@@ -380,7 +380,6 @@ export default function ProductModal() {
 
           <div className="pb-prod-details">
             <div>
-              <div className="pb-brand">PÓRTATE BIEN</div>
               <h2 className="pb-prod-title" id="pbProdTitle"></h2>
               <div className="pb-prod-price" id="pbProdPrice"></div>
               <div className="pb-prod-sub" id="pbProdSub"></div>
@@ -405,7 +404,7 @@ export default function ProductModal() {
               <button className="pb-atc-btn" id="pbATCBtn" disabled>Agotado</button>
             </div>
 
-            <div className="pb-prod-desc" id="pbProdDesc"></div>
+            <div className="pb-prod-desc" id="pbProdDesc" style={{ fontWeight: 600, lineHeight: 1.5 }}></div>
           </div>
         </section>
 
