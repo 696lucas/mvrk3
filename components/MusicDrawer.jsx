@@ -80,7 +80,7 @@ const AUDIO_BASES = ['/videos/canciones'];
 // Importante: encodeURIComponent para evitar problemas con #, &, espacios, tildes en los nombres de archivos.
 const toUrl = (base, file) => `${base}/${encodeURIComponent(file)}`;
 
-const TRACKS = BASE_TRACKS.map((t) => {
+  const TRACKS = BASE_TRACKS.map((t) => {
   // Si algún día renombráis y queréis “por nombre base”:
   // - Si no hay coverFile/audioFile, se intenta con `${name}.png/jpg` y `${name}.mp3`
   const coverCandidates = [];
@@ -164,6 +164,7 @@ export default function MusicDrawer() {
       const w = cover.naturalWidth || 4;
       const h = cover.naturalHeight || 3;
       setAspect(w, h);
+      cover.style.opacity = '1';
     };
 
     const onCoverError = () => {
@@ -176,8 +177,8 @@ export default function MusicDrawer() {
       if (coverFailed) return;
       coverFailed = true;
       console.warn('[ipod] No se pudo cargar la portada', t?.coverCandidates?.[coverAttempt]);
-      cover.src = '/ipod/IPod_29_2009.webp';
-      setAspect(4, 3);
+      cover.removeAttribute('src');
+      cover.style.opacity = '0';
     };
 
     cover.addEventListener('load', onCoverLoad);
@@ -231,7 +232,13 @@ export default function MusicDrawer() {
       audioAttempt = 0;
 
       cover.alt = t.title || 'Cover';
-      cover.src = t.coverCandidates?.[0] || '';
+      cover.style.opacity = '0';
+      const firstCover = t.coverCandidates?.[0] || '';
+      if (firstCover) {
+        cover.src = firstCover;
+      } else {
+        cover.removeAttribute('src');
+      }
 
       try {
         audio.pause();
