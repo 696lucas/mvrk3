@@ -134,8 +134,8 @@ const SECTIONS = [
         <h4>6. Envíos</h4>
         <ul>
           <li>Zonas de envío: toda España.</li>
-          <li>Plazo estimado: 3 a 5 días laborables desde la confirmación (salvo incidencias).</li>
-          <li>Empresa de transporte: DHL.</li>
+          <li>Plazo estimado: 5 a 8 días laborables desde la confirmación (salvo incidencias).</li>
+          
           <li>Coste estándar: 5 € por pedido (salvo promociones o condiciones especiales).</li>
           <li>Si el paquete se devuelve por causa imputable al cliente, los costes del nuevo envío serán asumidos por el cliente.</li>
         </ul>
