@@ -296,7 +296,7 @@ main{ position:relative; z-index:1; width:100%; }
   .pb-prod-close-btn{
     display: flex;
     position: fixed;
-    top: max(16px, calc(16px + env(safe-area-inset-top)));
+    top: max(58px, calc(env(safe-area-inset-top) + 50px));
     right: 16px;
     z-index: 200;
     width: 36px;
