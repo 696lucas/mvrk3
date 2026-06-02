@@ -27,6 +27,7 @@ export default function MerchOverlay() {
     const prevOverflow = body.style.overflow;
     body.classList.add("pb-modal-open");
     body.style.overflow = "hidden";
+    document.documentElement.classList.add("pb-merch-open");
     prevFocusRef.current = document.activeElement;
     const onKey = (e) => {
       if (e.key === "Escape") { e.preventDefault(); close(); }
@@ -46,6 +47,7 @@ export default function MerchOverlay() {
       body.classList.remove("pb-product-modal-open");
       body.classList.remove("pb-modal-open");
       body.style.overflow = prevOverflow || "";
+      document.documentElement.classList.remove("pb-merch-open");
       const prev = prevFocusRef.current;
       if (prev && prev.focus) setTimeout(() => prev.focus(), 0);
     };

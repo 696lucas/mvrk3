@@ -24,10 +24,6 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Con viewport-fit=cover el html se extiende detrás del notch — azul como el fondo */
-html {
-  background-color: #4f7cff;
-}
 
 /* Capa global fija a pantalla completa (para que absolute no “salte”) */
 #ipod-layer {
@@ -188,4 +184,12 @@ html {
     background-position: top center;
     overscroll-behavior-y: none;
   }
+}
+
+/* Safe areas iOS: azul notch arriba, verde césped abajo — debe ir después del media query */
+html {
+  background: linear-gradient(to bottom, #4f7cff 0%, #3db800 100%);
+}
+html.pb-merch-open {
+  background: #4f7cff;
 }
