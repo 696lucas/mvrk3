@@ -53,6 +53,12 @@ body {
     left: max(12px, calc(12px + env(safe-area-inset-left)));
     bottom: max(12px, calc(12px + env(safe-area-inset-bottom)));
   }
+
+  /* Extiende el video de fondo hacia arriba para cubrir la safe area del notch */
+  #bg-video {
+    top: calc(-1 * env(safe-area-inset-top));
+    height: calc(100dvh + env(safe-area-inset-top));
+  }
 }
 
 /* ===========================
