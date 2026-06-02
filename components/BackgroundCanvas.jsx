@@ -47,7 +47,7 @@ export default function BackgroundCanvas() {
         playsInline
         preload="auto"
         poster="/frames/frame_001.webp"
-        style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', objectFit: 'cover', zIndex: 0, display: 'block', background: '#000', pointerEvents: 'none' }}
+        style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', objectFit: 'cover', zIndex: 0, display: 'block', background: '#4f7cff', pointerEvents: 'none' }}
       >
         {/* Móvil: fondo con sombra (FONDO.mp4 en /landing) */}
         <source

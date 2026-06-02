@@ -24,6 +24,11 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Con viewport-fit=cover el html se extiende detrás del notch — azul como el fondo */
+html {
+  background-color: #4f7cff;
+}
+
 /* Capa global fija a pantalla completa (para que absolute no “salte”) */
 #ipod-layer {
   position: fixed;
@@ -54,11 +59,6 @@ body {
     bottom: max(12px, calc(12px + env(safe-area-inset-bottom)));
   }
 
-  /* Extiende el video de fondo hacia arriba para cubrir la safe area del notch */
-  #bg-video {
-    top: calc(-1 * env(safe-area-inset-top));
-    height: calc(100dvh + env(safe-area-inset-top));
-  }
 }
 
 /* ===========================
