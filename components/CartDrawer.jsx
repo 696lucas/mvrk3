@@ -2,42 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-
-// Minimal Shopify Storefront client
-const SHOPIFY_DOMAIN = "qhzkkr-2d.myshopify.com";
-const STOREFRONT_TOKEN = "b919997de07b4172affb1803d79a6509";
-const API_URL = `https://${SHOPIFY_DOMAIN}/api/2025-01/graphql.json`;
-
-async function gql(query, variables = {}) {
-  const r = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Shopify-Storefront-Access-Token": STOREFRONT_TOKEN,
-    },
-    body: JSON.stringify({ query, variables }),
-  });
-  const j = await r.json();
-  if (j.errors) console.error(j.errors);
-  return j.data;
-}
+import { gql } from "../lib/shopify/client";
+import { formatPrice } from "../utils/format";
 
 const CART_CREATE = `mutation($lines:[CartLineInput!]){ cartCreate(input:{ lines:$lines }){ cart{ id checkoutUrl } userErrors{ field message } } }`;
 const CART_QUERY = `query($id:ID!){ cart(id:$id){ id checkoutUrl totalQuantity cost{ subtotalAmount{ amount currencyCode } } lines(first:100){ edges{ node{ id quantity cost{ amountPerQuantity{ amount currencyCode } } merchandise{ ... on ProductVariant{ id title availableForSale image{ url } price{ amount currencyCode } product{ title } } } } } } } }`;
 const CART_LINES_ADD = `mutation($cartId:ID!,$lines:[CartLineInput!]!){ cartLinesAdd(cartId:$cartId, lines:$lines){ cart{ id } userErrors{ field message } } }`;
 const CART_LINES_UPDATE = `mutation($cartId:ID!,$lines:[CartLineUpdateInput!]!){ cartLinesUpdate(cartId:$cartId, lines:$lines){ cart{ id } userErrors{ field message } } }`;
 const CART_LINES_REMOVE = `mutation($cartId:ID!,$lineIds:[ID!]!){ cartLinesRemove(cartId:$cartId, lineIds:$lineIds){ cart{ id } userErrors{ field message } } }`;
-
-function formatPrice(amt, cur = "EUR") {
-  try {
-    return new Intl.NumberFormat("es-ES", {
-      style: "currency",
-      currency: cur,
-    }).format(Number(amt ?? 0));
-  } catch {
-    return `${amt} ${cur}`;
-  }
-}
 
 function getCartState() {
   try {
@@ -87,7 +59,7 @@ export default function CartDrawer() {
     #pb-cart-dlg{ position:fixed; inset:0; z-index:100000; display:none; }
     #pb-cart-dlg.is-open{ display:block; }
     .pb-cart-dlg__overlay{ position:absolute; inset:0; background:rgba(0,0,0,.40); backdrop-filter: blur(1px);  z-index:1; }
-    .pb-cart-dlg__panel{ position:absolute; right:0; top:0; bottom:0; width:min(90vw, 340px); background:#fff; color:#111; display:flex; flex-direction:column; box-shadow: -10px 0 28px rgba(0,0,0,.35);  z-index:2; }
+    .pb-cart-dlg__panel{ position:absolute; right:0; top:0; bottom:0; width:min(90vw, 340px); background:#fff; color:#111; display:flex; flex-direction:column; box-shadow: -10px 0 28px rgba(0,0,0,.35); z-index:2; padding-top:env(safe-area-inset-top); padding-right:env(safe-area-inset-right); padding-bottom:env(safe-area-inset-bottom); }
     .pb-cart__head{ padding:16px 18px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,.08); font-weight:700; }
     /* Ensure the close button sits above any overlay and catches clicks */
     .pb-cart__close{ position:relative; z-index:3; pointer-events:auto; background:transparent; border:0; }
@@ -162,21 +134,7 @@ export default function CartDrawer() {
     s.currency =
       crt?.cost?.subtotalAmount?.currencyCode || s.currency || "EUR";
     setCartState(s);
-    // update visual badge
-    const icon =
-      document.querySelector(".pb-cart-trigger") ||
-      document.querySelector('a[href="/cart"]');
-    if (icon) {
-      let b = icon.querySelector(".pb-cart-badge");
-      if (!b) {
-        b = document.createElement("span");
-        b.className = "pb-cart-badge";
-        icon.appendChild(b);
-      }
-      const q = Number(s.qty || 0);
-      b.textContent = String(q);
-      b.style.display = q ? "inline-flex" : "none";
-    }
+    updateBadgeFromState();
     return crt;
   }
 

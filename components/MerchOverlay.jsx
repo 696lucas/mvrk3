@@ -86,8 +86,8 @@ export default function MerchOverlay() {
         }
         .pb-merch-close {
           position: fixed;
-          left: 12px;
-          top: 12px;
+          left: max(12px, calc(12px + env(safe-area-inset-left)));
+          top: max(12px, calc(12px + env(safe-area-inset-top)));
           z-index: 999999;
           border: none;
           background: transparent;
@@ -96,6 +96,7 @@ export default function MerchOverlay() {
           align-items: center;
           justify-content: center;
           cursor: pointer;
+          outline: none;
         }
         .pb-merch-close-icon {
           width: 32px;

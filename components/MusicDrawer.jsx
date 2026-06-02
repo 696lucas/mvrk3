@@ -72,6 +72,10 @@ const BASE_TRACKS = [
 
   // YOTMB: portada "YOTMB.png", audio "MVRK - YOTMB.mp3"
   { name: 'YOTMB', title: 'YOTMB', coverFile: 'YOTMB.png', audioFile: 'MVRK - YOTMB.mp3' },
+
+  { name: 'Hermes', title: 'Hermes', coverFile: 'hermes.png', audioFile: 'Abhir - Hermes.mp3' },
+  { name: 'Pop Up', title: 'Pop Up', coverFile: 'popup.png', audioFile: 'MVRK - Pop Up.mp3' },
+  { name: 'Nevera', title: 'Nevera', coverFile: 'nevera.png', audioFile: 'Robert Dinero - Nevera.mp3' },
 ];
 
 // Rutas reales en /public/videos
@@ -109,6 +113,9 @@ const toUrl = (base, file) => `${base}/${encodeURIComponent(file)}`;
 
   return { ...t, coverCandidates, audioCandidates };
 });
+
+// Tracks that get extra entries in the bag until they've been played once
+const BOOST_ONCE = new Set(['hermes', 'nevera']);
 
 export default function MusicDrawer() {
   const [isMobile, setIsMobile] = useState(false);
@@ -208,6 +215,14 @@ export default function MusicDrawer() {
     let history = [];
     let bag = [];
 
+    // Indices of boosted tracks not yet played — gets 3 entries in the bag instead of 1
+    const boostedUnplayed = new Set(
+      TRACKS.reduce((acc, t, idx) => {
+        if (BOOST_ONCE.has(t.name.toLowerCase())) acc.push(idx);
+        return acc;
+      }, [])
+    );
+
     function shuffleLocal(a) {
       for (let j = a.length - 1; j > 0; j--) {
         const k = Math.floor(Math.random() * (j + 1));
@@ -217,12 +232,22 @@ export default function MusicDrawer() {
     }
 
     function refillBag(excludeIndex) {
-      const candidates = [...Array(TRACKS.length).keys()].filter((idx) => idx !== excludeIndex);
+      const candidates = [];
+      [...Array(TRACKS.length).keys()]
+        .filter((idx) => idx !== excludeIndex)
+        .forEach((idx) => {
+          candidates.push(idx);
+          if (boostedUnplayed.has(idx)) {
+            candidates.push(idx);
+            candidates.push(idx);
+          }
+        });
       bag = shuffleLocal(candidates);
     }
 
     function loadTrack(index, autoplay = false) {
       i = (index + TRACKS.length) % TRACKS.length;
+      boostedUnplayed.delete(i);
       const t = TRACKS[i];
 
       if (ui.title) ui.title.textContent = t.title || '';
@@ -412,7 +437,7 @@ export default function MusicDrawer() {
 
     // initial state
     try {
-      const startIndex = TRACKS.findIndex((t) => t.name.toLowerCase() === 'nostoi');
+      const startIndex = TRACKS.findIndex((t) => t.name.toLowerCase() === 'pop up');
       loadTrack(startIndex !== -1 ? startIndex : 0, false);
     } catch (_) {}
 

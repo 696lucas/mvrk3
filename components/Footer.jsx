@@ -1,5 +1,3 @@
-'use client';
-
 export default function Footer() {
   return (
     <footer className="pb-footer-split-wrap" role="contentinfo" aria-label="Footer">

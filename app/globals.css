@@ -34,11 +34,11 @@ body {
 
 /* El iPod en absolute dentro de la capa fija */
 #ipod-layer .ipod {
-  position: absolute;    /* absolute como pedías */
-  left: 16px;
-  bottom: 16px;
+  position: absolute;
+  left: max(16px, calc(16px + env(safe-area-inset-left)));
+  bottom: max(16px, calc(16px + env(safe-area-inset-bottom)));
   width: clamp(240px, 28vw, 360px);
-  pointer-events: auto;  /* clicable */
+  pointer-events: auto;
 }
 
 /* Evita mezclas raras con el vídeo/fondos */
@@ -50,6 +50,8 @@ body {
 @media (max-width: 640px) {
   #ipod-layer .ipod {
     width: clamp(220px, 60vw, 320px);
+    left: max(12px, calc(12px + env(safe-area-inset-left)));
+    bottom: max(12px, calc(12px + env(safe-area-inset-bottom)));
   }
 }
 

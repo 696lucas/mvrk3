@@ -146,7 +146,8 @@ export default function Collage() {
             base: applyAlias(basename(first)),
             url: fixAssetUrl(first),
             modelId,
-            variantIndex: Math.max(0, variants.indexOf(v))
+            variantIndex: Math.max(0, variants.indexOf(v)),
+            soldOut: !!v.soldOut,
           });
         }
       }
@@ -256,7 +257,7 @@ export default function Collage() {
           ax += (rnd()*2-1)*jx;
           ay += (rnd()*2-1)*jy;
 
-          const { base, url, modelId, variantIndex } = items[index++];
+          const { base, url, modelId, variantIndex, soldOut } = items[index++];
 
           const baseScale = ((CFG.scaleMin||0.94) +
             rnd() * ((CFG.scaleMax||1.02) - (CFG.scaleMin||0.94))) * (scale||1);
@@ -280,7 +281,7 @@ export default function Collage() {
           const z = Math.floor(r * cols + c + rnd() * (CFG.zSpread||1200));
 
           const el = document.createElement('div');
-          el.className = 'piece';
+          el.className = soldOut ? 'piece is-sold-out' : 'piece';
           el.style.setProperty('--tx', (ax - window.innerWidth/2) + 'px');
           el.style.setProperty('--ty', (ay - (rectT + rectH/2)) + 'px');
           el.style.setProperty('--rot', rot);
@@ -291,7 +292,7 @@ export default function Collage() {
           el.dataset.base = base;
           if (modelId) el.dataset.modelId = modelId;
           if (variantIndex != null) el.dataset.variantIndex = String(variantIndex);
-          el.innerHTML = `<img src="${url}" alt="${base}"/>`;
+          el.innerHTML = `<img src="${url}" alt="${base}"/>${soldOut ? '<span class="pb-sold-badge">Sold Out</span>' : ''}`;
 
           $collage.appendChild(el);
         }

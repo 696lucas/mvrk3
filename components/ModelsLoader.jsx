@@ -1,11 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-
-// Minimal Shopify client copied from legacy for collection fetch
-const SHOPIFY_DOMAIN = "qhzkkr-2d.myshopify.com";
-const STOREFRONT_TOKEN = "b919997de07b4172affb1803d79a6509";
-const API_URL = `https://${SHOPIFY_DOMAIN}/api/2025-01/graphql.json`;
+import { gql } from "../lib/shopify/client";
+import { formatPrice } from "../utils/format";
 
 const COLLECTION_HANDLE = "frontpage";
 
@@ -36,26 +33,7 @@ const COLLECTION_PRODUCTS = `
   }
 `;
 
-async function gql(query, variables = {}) {
-  const r = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Shopify-Storefront-Access-Token": STOREFRONT_TOKEN,
-    },
-    body: JSON.stringify({ query, variables }),
-  });
-  const j = await r.json();
-  if (j.errors) console.error(j.errors);
-  return j.data;
-}
-
 function base(u){ return u ? (u.split('/').pop()||'').split('?')[0] : ''; }
-
-function formatPrice(amt, cur = 'EUR'){
-  try { return new Intl.NumberFormat('es-ES',{ style:'currency', currency:cur }).format(Number(amt||0)); }
-  catch { return `${amt} ${cur}`; }
-}
 
   function toModel(product){
     const prodImgs = product?.images?.edges?.map(e => e.node.url) || [];
