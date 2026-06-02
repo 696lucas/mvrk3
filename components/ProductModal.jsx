@@ -322,14 +322,25 @@ export default function ProductModal() {
     overlayEl && overlayEl.addEventListener('click', onOverlayClick);
     document.addEventListener('keydown', onEsc);
 
-    // Mobile only: tap on background area around the card closes the modal
+    // Mobile only: close when tapping blurred background or empty zones inside card
     const isMobile = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width:768px)').matches;
-    const onModalBgTap = (e) => {
+    let tapStartX = 0, tapStartY = 0;
+    const onTapStart = (e) => { tapStartX = e.touches[0].clientX; tapStartY = e.touches[0].clientY; };
+    const onTapEnd = (e) => {
       if (!modalEl.classList.contains('is-open')) return;
-      if (cardEl && cardEl.contains(e.target)) return;
-      closeProductModal();
+      const t = e.changedTouches[0];
+      if (Math.abs(t.clientX - tapStartX) > 10 || Math.abs(t.clientY - tapStartY) > 15) return;
+      const target = e.target;
+      // Blurred background: outside the card
+      if (!cardEl || !cardEl.contains(target)) { closeProductModal(); return; }
+      // Empty zones: tap landed directly on a container, not on any content child
+      const emptyZones = [cardEl, cardEl.querySelector('.pb-prod-main'), cardEl.querySelector('.pb-prod-details'), cardEl.querySelector('.pb-related-block')].filter(Boolean);
+      if (emptyZones.includes(target)) closeProductModal();
     };
-    if (isMobile) modalEl.addEventListener('click', onModalBgTap);
+    if (isMobile) {
+      modalEl.addEventListener('touchstart', onTapStart, { passive: true });
+      modalEl.addEventListener('touchend', onTapEnd, { passive: true });
+    }
     const onQty = (e)=>{ const btn = e.target.closest('.pb-qty-btn'); if(!btn) return; e.stopPropagation(); let qty = parseInt(qtyNumEl?.textContent||'1',10); const delta = parseInt(btn.dataset.delta||'0',10); qty = clamp(qty+delta,1,9); if(qtyNumEl) qtyNumEl.textContent=String(qty); };
     qtyBoxEl && qtyBoxEl.addEventListener('click', onQty);
 
@@ -357,7 +368,10 @@ export default function ProductModal() {
       cardEl && cardEl.removeEventListener('click', onCardClick);
       overlayEl && overlayEl.removeEventListener('click', onOverlayClick);
       document.removeEventListener('keydown', onEsc);
-      if (isMobile) modalEl.removeEventListener('click', onModalBgTap);
+      if (isMobile) {
+        modalEl.removeEventListener('touchstart', onTapStart);
+        modalEl.removeEventListener('touchend', onTapEnd);
+      }
       qtyBoxEl && qtyBoxEl.removeEventListener('click', onQty);
       if (frameEl){
         frameEl.removeEventListener('touchstart', onPointerDown);
