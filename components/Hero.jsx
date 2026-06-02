@@ -3,7 +3,7 @@ import Image from 'next/image';
 export default function Hero() {
   return (
     <header className="hero" id="hero">
-      <div className="hero-free-ship">ENVÍO GRATIS A PARTIR DE 80€</div>
+      <div className="hero-free-ship">ENVÍOS NACIONALES GRATIS A PARTIR DE 80€</div>
       <Image
         src="/lettering/portate%20bien%20solo.png"
         alt="Portate bien"
