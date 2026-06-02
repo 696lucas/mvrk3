@@ -296,16 +296,14 @@ main{ position:relative; z-index:1; width:100%; }
   .pb-prod-close-btn{
     display: flex;
     position: fixed;
-    top: max(58px, calc(env(safe-area-inset-top) + 50px));
+    top: max(80px, calc(env(safe-area-inset-top) + 72px));
     right: 16px;
     z-index: 200;
     width: 36px;
     height: 36px;
     align-items: center;
     justify-content: center;
-    background: rgba(100,100,100,0.65);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    background: transparent;
     border: none;
     border-radius: 50%;
     color: #fff;
@@ -370,7 +368,7 @@ main{ position:relative; z-index:1; width:100%; }
 
 /* ===== Recomendados (debajo del producto) ===== */
 .pb-related-block{
-  border-top:none; background:transparent; margin-top: 4px;
+  border-top:none; background:transparent; margin-top: 0;
   padding-top:0; padding-bottom:0;
 }
 .pb-related-title{
