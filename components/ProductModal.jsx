@@ -241,6 +241,7 @@ export default function ProductModal() {
         if (!match) return;
         const { modelId, model, variantIndex } = match;
         const variant = model.variants[variantIndex];
+        if (variant.soldOut) return;
         const firstImg = (variant.images && variant.images[0]) ? fixAssetUrl(variant.images[0]) : '';
         items.push({
           modelId,
@@ -248,7 +249,7 @@ export default function ProductModal() {
           firstImg,
           title: model.title,
           price: variant.price || '',
-          soldOut: !!variant.soldOut,
+          soldOut: false,
         });
       });
       setRelatedItems(items);
@@ -264,7 +265,7 @@ export default function ProductModal() {
       const current = applyAlias(basename(currentVariantKey||''));
       const PB_MODELS = window.PB_MODELS || {};
       const allKeys = new Set();
-      for (const m of Object.values(PB_MODELS)){ for (const v of (m.variants||[])){ const k = applyAlias(basename(v.key||'')); if (k && k !== current) allKeys.add(k); } }
+      for (const m of Object.values(PB_MODELS)){ for (const v of (m.variants||[])){ if (v.soldOut) continue; const k = applyAlias(basename(v.key||'')); if (k && k !== current) allKeys.add(k); } }
       const arr = Array.from(allKeys); for (let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
       return arr.slice(0,5);
     }
@@ -320,6 +321,15 @@ export default function ProductModal() {
     cardEl && cardEl.addEventListener('click', onCardClick);
     overlayEl && overlayEl.addEventListener('click', onOverlayClick);
     document.addEventListener('keydown', onEsc);
+
+    // Mobile only: tap on background area around the card closes the modal
+    const isMobile = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width:768px)').matches;
+    const onModalBgTap = (e) => {
+      if (!modalEl.classList.contains('is-open')) return;
+      if (cardEl && cardEl.contains(e.target)) return;
+      closeProductModal();
+    };
+    if (isMobile) modalEl.addEventListener('click', onModalBgTap);
     const onQty = (e)=>{ const btn = e.target.closest('.pb-qty-btn'); if(!btn) return; e.stopPropagation(); let qty = parseInt(qtyNumEl?.textContent||'1',10); const delta = parseInt(btn.dataset.delta||'0',10); qty = clamp(qty+delta,1,9); if(qtyNumEl) qtyNumEl.textContent=String(qty); };
     qtyBoxEl && qtyBoxEl.addEventListener('click', onQty);
 
@@ -347,6 +357,7 @@ export default function ProductModal() {
       cardEl && cardEl.removeEventListener('click', onCardClick);
       overlayEl && overlayEl.removeEventListener('click', onOverlayClick);
       document.removeEventListener('keydown', onEsc);
+      if (isMobile) modalEl.removeEventListener('click', onModalBgTap);
       qtyBoxEl && qtyBoxEl.removeEventListener('click', onQty);
       if (frameEl){
         frameEl.removeEventListener('touchstart', onPointerDown);
